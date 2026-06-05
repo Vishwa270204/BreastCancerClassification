@@ -42,7 +42,7 @@ div[data-testid="stSidebar"] * {
 .header-card h1 {
     font-size: 1.35rem;
     margin: 0;
-    color: #374151;
+    color: white;
 }
 
 .header-card p {
