@@ -35,9 +35,10 @@ html, body, [class*="css"], .stApp {
 .main .block-container {
     padding: 0.6rem 1.2rem 0.5rem 1.2rem !important;
     max-width: 100% !important;
+    margin-top: 70px !important;   /* push content below fixed header */
 }
 
-/* Remove top padding on main area */
+/* Hide native Streamlit top bar */
 header[data-testid="stHeader"] {
     height: 0 !important;
     display: none !important;
@@ -48,13 +49,33 @@ header[data-testid="stHeader"] {
 }
 
 /* ═══════════════════════════════════════════
-   SIDEBAR — Dark Charcoal Premium
+   FIXED FULL-VIEWPORT HEADER OVERLAY
+   (sits above sidebar AND main content)
+═══════════════════════════════════════════ */
+.fixed-hero-wrapper {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 9999;
+    padding: 8px 14px 0px 14px;
+    pointer-events: none;   /* let clicks pass through to sidebar toggle */
+}
+
+.fixed-hero-wrapper .hero-header {
+    pointer-events: all;
+}
+
+/* ═══════════════════════════════════════════
+   SIDEBAR — Dark Charcoal Premium (STATIC)
 ═══════════════════════════════════════════ */
 div[data-testid="stSidebar"] {
     background: #111827 !important;
     border-right: 1px solid #1f2937 !important;
     width: 300px !important;
     min-width: 300px !important;
+    /* Push sidebar content below the fixed header */
+    padding-top: 70px !important;
 }
 
 div[data-testid="stSidebar"] > div {
@@ -63,6 +84,23 @@ div[data-testid="stSidebar"] > div {
 
 div[data-testid="stSidebar"] .sidebar-content {
     padding: 0 !important;
+}
+
+/* Hide the collapse/toggle arrow button — makes sidebar static */
+div[data-testid="stSidebar"] div[data-testid="collapsedControl"],
+button[data-testid="baseButton-headerNoPadding"],
+div[data-testid="stSidebarCollapseButton"],
+section[data-testid="stSidebar"] > div > div:first-child > div > button,
+.st-emotion-cache-1cypcdb,
+div[class*="collapsedControl"],
+button[aria-label="Close sidebar"],
+button[aria-label="Collapse sidebar"] {
+    display: none !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+    width: 0 !important;
+    height: 0 !important;
+    overflow: hidden !important;
 }
 
 /* All sidebar text */
@@ -164,20 +202,20 @@ div[data-testid="stSidebar"] .stNumberInput {
 }
 
 /* ═══════════════════════════════════════════
-   FULL-WIDTH HEADER — Clean Single Title Card
+   FULL-WIDTH HEADER — Fixed, overlaps sidebar
 ═══════════════════════════════════════════ */
 .hero-header {
     background: linear-gradient(110deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
-    border-radius: 14px;
+    border-radius: 12px;
     padding: 0 32px;
-    margin-bottom: 12px;
+    margin-bottom: 0;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    box-shadow: 0 4px 24px rgba(0,0,0,0.22), inset 0 1px 0 rgba(255,255,255,0.06);
+    box-shadow: 0 4px 28px rgba(0,0,0,0.28), inset 0 1px 0 rgba(255,255,255,0.06);
     position: relative;
     overflow: hidden;
-    min-height: 64px;
+    min-height: 62px;
     border: 1px solid #1e293b;
 }
 
@@ -531,6 +569,7 @@ with st.sidebar:
 # HERO HEADER (full-width)
 # ══════════════════════════════
 st.markdown(f"""
+<div class="fixed-hero-wrapper">
 <div class="hero-header">
     <div class="hero-left">
         <div class="hero-ribbon">🎗️</div>
@@ -557,6 +596,7 @@ st.markdown(f"""
         <div class="hero-divider"></div>
         <div style="font-size:2.2rem;opacity:0.7;">🏥</div>
     </div>
+</div>
 </div>
 """, unsafe_allow_html=True)
 
