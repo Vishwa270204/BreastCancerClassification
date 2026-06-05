@@ -19,41 +19,72 @@ st.markdown("""
 html, body, [class*="css"] { font-family: 'Outfit', sans-serif; }
 h1, h2, h3 { font-family: 'Playfair Display', serif; }
 
-/* Hide Streamlit chrome */
 #MainMenu, footer { visibility: hidden; }
 header[data-testid="stHeader"] { display: none !important; }
-[data-testid="collapsedControl"] { display: none !important; }
 
-/* App background */
+/* ── Force hide the collapse/expand toggle arrow forever ── */
+[data-testid="collapsedControl"],
+button[kind="header"],
+.st-emotion-cache-1egp75f,
+[data-testid="stSidebarCollapseButton"] { display: none !important; }
+
+/* ── App bg ── */
 .stApp { background: #f5eded; }
-
-/* Remove default top padding */
 .block-container {
     padding-top: 1rem !important;
     padding-bottom: 1rem !important;
 }
 
-/* ── Sidebar Styling ── */
-section[data-testid="stSidebar"] {
+/* ── SIDEBAR — always dark, never white ── */
+section[data-testid="stSidebar"],
+section[data-testid="stSidebar"] > div,
+section[data-testid="stSidebar"] > div > div,
+section[data-testid="stSidebar"] > div > div > div {
+    background-color: #180608 !important;
     background: #180608 !important;
+}
+/* Force min width so it never "collapses" to invisible */
+section[data-testid="stSidebar"] {
     min-width: 260px !important;
     max-width: 260px !important;
+    width: 260px !important;
 }
-section[data-testid="stSidebar"] * { color: #f0dada !important; }
-section[data-testid="stSidebar"] .stSelectbox label,
-section[data-testid="stSidebar"] .stNumberInput label { color: #f9c8c8 !important; font-size: 0.82rem !important; }
-section[data-testid="stSidebar"] hr { border-color: #3a1010 !important; }
+/* All text inside sidebar */
+section[data-testid="stSidebar"] * {
+    color: #f0dada !important;
+}
+section[data-testid="stSidebar"] label {
+    color: #f9c8c8 !important;
+    font-size: 0.82rem !important;
+}
+section[data-testid="stSidebar"] hr {
+    border-color: #3a1010 !important;
+}
+/* Input boxes inside sidebar */
+section[data-testid="stSidebar"] input,
+section[data-testid="stSidebar"] .stSelectbox div[data-baseweb="select"] {
+    background-color: #2c0c0c !important;
+    border-color: #5a2020 !important;
+    color: #f0dada !important;
+}
+/* Predict button */
 section[data-testid="stSidebar"] .stButton > button {
     background: linear-gradient(135deg, #9b1414, #dc2626) !important;
-    color: white !important; border: none !important;
-    border-radius: 8px !important; font-weight: 600 !important;
-    padding: 10px !important; width: 100% !important;
+    color: white !important;
+    border: none !important;
+    border-radius: 8px !important;
+    font-weight: 600 !important;
+    padding: 10px !important;
+    width: 100% !important;
     font-size: 0.9rem !important;
     box-shadow: 0 4px 14px rgba(185,28,28,0.4) !important;
+    transition: opacity 0.2s;
 }
-section[data-testid="stSidebar"] .stButton > button:hover { opacity: 0.85 !important; }
+section[data-testid="stSidebar"] .stButton > button:hover {
+    opacity: 0.85 !important;
+}
 
-/* ── Header card ── */
+/* ── Header ── */
 .header-bar {
     background: linear-gradient(90deg, #6b0f1a 0%, #b91c1c 55%, #dc2626 100%);
     border-radius: 14px;
@@ -170,7 +201,7 @@ st.markdown("""
     </div>
     <div class="hbar-divider"></div>
     <p style="color:rgba(255,255,255,0.6);font-size:0.72rem;margin:0;line-height:1.6">
-        8 Models<br>LR · KNN · RF · DT · SVM · GB · NB · XGB
+        8 Models &nbsp;·&nbsp; LR · KNN · RF · DT · SVM · GB · NB · XGB
     </p>
 </div>
 """, unsafe_allow_html=True)
@@ -194,23 +225,26 @@ def get_input_for_model(name):
     X = build_input()
     return scaler.transform(X) if name in SCALED_MODELS else X.values
 
+# Both charts use identical figsize so they render at the same height
+CHART_SIZE = (4.8, 3.0)
+
 def chart_confidence(alive_p, dead_p, model_name):
-    fig, ax = plt.subplots(figsize=(4.2, 2.2))
+    fig, ax = plt.subplots(figsize=CHART_SIZE)
     fig.patch.set_facecolor("white")
     ax.set_facecolor("white")
     bars = ax.barh(["Deceased", "Alive"], [dead_p, alive_p],
                    color=["#b91c1c", "#15803d"], height=0.42, edgecolor="none")
     for bar, val in zip(bars, [dead_p, alive_p]):
         ax.text(val + 1.5, bar.get_y() + bar.get_height() / 2,
-                f"{val:.1f}%", va="center", fontsize=10, fontweight="bold", color="#333")
-    ax.set_xlim(0, 120)
+                f"{val:.1f}%", va="center", fontsize=11, fontweight="bold", color="#333")
+    ax.set_xlim(0, 125)
     ax.set_xlabel("Probability (%)", fontsize=8, color="#999")
     ax.set_title(f"Prediction Confidence\n{model_name}", fontsize=9,
-                 color="#6b0f1a", fontweight="bold", pad=8)
-    ax.tick_params(colors="#666", labelsize=8)
+                 color="#6b0f1a", fontweight="bold", pad=10)
+    ax.tick_params(colors="#666", labelsize=9)
     for spine in ax.spines.values():
         spine.set_visible(False)
-    plt.tight_layout(pad=0.6)
+    plt.tight_layout(pad=0.8)
     return fig
 
 def chart_model_comparison():
@@ -227,7 +261,7 @@ def chart_model_comparison():
                              "Alive %": 100 if pred == 0 else 0,
                              "Dead %":  100 if pred == 1 else 0})
     df  = pd.DataFrame(results)
-    fig, ax = plt.subplots(figsize=(5.8, 2.6))
+    fig, ax = plt.subplots(figsize=CHART_SIZE)
     fig.patch.set_facecolor("white")
     ax.set_facecolor("white")
     x, w = np.arange(len(df)), 0.35
@@ -237,20 +271,20 @@ def chart_model_comparison():
     ax.set_xticklabels([n.replace(" ", "\n") for n in df["Model"]], fontsize=6.5, color="#444")
     ax.set_ylabel("Probability (%)", fontsize=8, color="#999")
     ax.set_title("All Models Comparison\nAlive vs Deceased", fontsize=9,
-                 color="#6b0f1a", fontweight="bold", pad=8)
+                 color="#6b0f1a", fontweight="bold", pad=10)
     ax.set_ylim(0, 120)
     ax.legend(fontsize=8, framealpha=0, loc="upper right")
     ax.tick_params(colors="#666", labelsize=7)
-    for spine in ax.spines.values(): spine.set_visible(False)
+    for spine in ax.spines.values():
+        spine.set_visible(False)
     idx = MODEL_NAMES.index(selected_model)
     ax.axvspan(idx - 0.5, idx + 0.5, color="#6b0f1a", alpha=0.07, zorder=0)
-    plt.tight_layout(pad=0.6)
+    plt.tight_layout(pad=0.8)
     return fig
 
 # ── ROW 1: Patient Summary | Prediction Result ──
 col1, col2 = st.columns([1.2, 1], gap="large")
-
-node_ratio = reginol_node_pos / max(regional_node_exam, 1)
+node_ratio  = reginol_node_pos / max(regional_node_exam, 1)
 
 with col1:
     st.markdown('<div class="section-title">📋 Patient Summary</div>', unsafe_allow_html=True)
@@ -273,7 +307,6 @@ with col2:
         X_input      = get_input_for_model(selected_model)
         pred_encoded = model.predict(X_input)[0]
         pred_label   = label_encoder.inverse_transform([pred_encoded])[0]
-
         alive_p, dead_p = 50.0, 50.0
 
         if pred_label == "Alive":
@@ -302,25 +335,26 @@ with col2:
             </div>""", unsafe_allow_html=True)
 
         st.markdown("""<div class="info-box">
-            ⚠️ <strong>Disclaimer:</strong> This tool is for educational purposes only
-            and is not a substitute for clinical diagnosis.
+            ⚠️ <strong>Disclaimer:</strong> For educational purposes only.
+            Not a substitute for clinical diagnosis.
         </div>""", unsafe_allow_html=True)
-
     else:
         st.info("👈 Fill in patient details in the sidebar and click **Predict Survival**.")
 
-# ── ROW 2: Both Charts (only after prediction) ──
+# ── ROW 2: Both Charts Same Height ──
 if predict_btn:
     st.markdown('<div class="section-title" style="margin-top:22px">📊 Analytics</div>',
                 unsafe_allow_html=True)
-    ch1, ch2 = st.columns([1, 1.4], gap="large")
+    ch1, ch2 = st.columns(2, gap="large")
 
     with ch1:
         st.markdown('<div class="chart-wrap">', unsafe_allow_html=True)
-        st.pyplot(chart_confidence(alive_p, dead_p, selected_model))
+        fig1 = chart_confidence(alive_p, dead_p, selected_model)
+        st.pyplot(fig1, use_container_width=True)
         st.markdown('</div>', unsafe_allow_html=True)
 
     with ch2:
         st.markdown('<div class="chart-wrap">', unsafe_allow_html=True)
-        st.pyplot(chart_model_comparison())
+        fig2 = chart_model_comparison()
+        st.pyplot(fig2, use_container_width=True)
         st.markdown('</div>', unsafe_allow_html=True)
