@@ -4,231 +4,450 @@ import numpy as np
 import joblib
 import os
 import matplotlib.pyplot as plt
-import matplotlib.patches as mpatches
+import matplotlib
+matplotlib.rcParams['font.family'] = 'DejaVu Sans'
 
-st.set_page_config(page_title="Breast Cancer Survival Predictor", page_icon="🎗️", layout="wide")
+st.set_page_config(
+    page_title="Breast Cancer Survival Predictor",
+    page_icon="🎗️",
+    layout="wide",
+    initial_sidebar_state="expanded"
+)
 
 st.markdown("""
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Nunito:wght@300;400;500;600;700&display=swap');
+/* ═══════════════════════════════════════════
+   GOOGLE FONTS
+═══════════════════════════════════════════ */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Sora:wght@400;600;700;800&display=swap');
 
-html, body, [class*="css"] {
-    font-family: 'Nunito', sans-serif;
+/* ═══════════════════════════════════════════
+   GLOBAL RESET & BASE
+═══════════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body, [class*="css"], .stApp {
+    font-family: 'Plus Jakarta Sans', sans-serif !important;
+    font-size: 13px;
 }
 
-h1, h2, h3 {
-    font-family: 'Playfair Display', serif;
+/* Kill default Streamlit padding */
+.main .block-container {
+    padding: 0.6rem 1.2rem 0.5rem 1.2rem !important;
+    max-width: 100% !important;
 }
 
-/* ── App Background ── */
+/* Remove top padding on main area */
+header[data-testid="stHeader"] {
+    height: 0 !important;
+    display: none !important;
+}
+
 .stApp {
-    background: #f9fafb;
+    background: #f0f2f5 !important;
 }
 
-/* ── Sidebar ── */
+/* ═══════════════════════════════════════════
+   SIDEBAR — Dark Charcoal Premium
+═══════════════════════════════════════════ */
 div[data-testid="stSidebar"] {
-    background: linear-gradient(180deg, #1a3c1a 0%, #2d5a2d 60%, #1f3f1f 100%);
-    border-right: 3px solid #4caf50;
+    background: #111827 !important;
+    border-right: 1px solid #1f2937 !important;
+    width: 260px !important;
 }
 
+div[data-testid="stSidebar"] > div {
+    padding: 0 !important;
+}
+
+div[data-testid="stSidebar"] .sidebar-content {
+    padding: 0 !important;
+}
+
+/* All sidebar text */
 div[data-testid="stSidebar"] * {
-    color: #e8f5e9 !important;
+    color: #e5e7eb !important;
+    font-family: 'Plus Jakarta Sans', sans-serif !important;
 }
 
+/* Sidebar labels */
+div[data-testid="stSidebar"] label,
 div[data-testid="stSidebar"] .stSelectbox label,
 div[data-testid="stSidebar"] .stNumberInput label {
-    color: #a5d6a7 !important;
+    color: #9ca3af !important;
+    font-size: 0.72rem !important;
     font-weight: 600 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.08em !important;
+    margin-bottom: 2px !important;
+}
+
+/* Sidebar inputs */
+div[data-testid="stSidebar"] input,
+div[data-testid="stSidebar"] .stSelectbox > div > div,
+div[data-testid="stSidebar"] [data-baseweb="select"] > div {
+    background: #1f2937 !important;
+    border: 1px solid #374151 !important;
+    border-radius: 8px !important;
+    color: #f3f4f6 !important;
     font-size: 0.82rem !important;
+    padding: 5px 10px !important;
+    min-height: 34px !important;
+}
+
+div[data-testid="stSidebar"] input:focus,
+div[data-testid="stSidebar"] [data-baseweb="select"] > div:focus-within {
+    border-color: #16a34a !important;
+    box-shadow: 0 0 0 2px rgba(22,163,74,0.2) !important;
+}
+
+/* Sidebar number input buttons */
+div[data-testid="stSidebar"] button[kind="secondary"] {
+    background: #374151 !important;
+    border: none !important;
+    color: #d1d5db !important;
+    border-radius: 6px !important;
+}
+
+/* Sidebar markdown headings */
+div[data-testid="stSidebar"] h1,
+div[data-testid="stSidebar"] h2,
+div[data-testid="stSidebar"] h3 {
+    color: #f9fafb !important;
+    font-family: 'Sora', sans-serif !important;
+    font-size: 0.8rem !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.1em !important;
+    text-transform: uppercase !important;
+    margin: 0 !important;
+}
+
+/* Sidebar divider */
+div[data-testid="stSidebar"] hr {
+    border-color: #1f2937 !important;
+    margin: 8px 0 !important;
+}
+
+/* PREDICT BUTTON */
+div[data-testid="stSidebar"] .stButton > button {
+    background: linear-gradient(135deg, #16a34a 0%, #dc2626 100%) !important;
+    color: white !important;
+    border: none !important;
+    border-radius: 10px !important;
+    font-family: 'Sora', sans-serif !important;
+    font-weight: 700 !important;
+    font-size: 0.82rem !important;
+    letter-spacing: 0.06em !important;
+    text-transform: uppercase !important;
+    padding: 0.55rem 1rem !important;
+    width: 100% !important;
+    box-shadow: 0 4px 15px rgba(22,163,74,0.3) !important;
+    transition: all 0.2s ease !important;
+    cursor: pointer !important;
+}
+
+div[data-testid="stSidebar"] .stButton > button:hover {
+    box-shadow: 0 6px 22px rgba(22,163,74,0.45) !important;
+    transform: translateY(-1px) !important;
+    filter: brightness(1.08) !important;
+}
+
+div[data-testid="stSidebar"] .stButton > button:active {
+    transform: translateY(0px) !important;
+}
+
+/* Sidebar element spacing */
+div[data-testid="stSidebar"] .stSelectbox,
+div[data-testid="stSidebar"] .stNumberInput {
+    margin-bottom: 6px !important;
+}
+
+/* ═══════════════════════════════════════════
+   FULL-WIDTH HEADER HERO
+═══════════════════════════════════════════ */
+.hero-header {
+    background: linear-gradient(100deg, #16a34a 0%, #15803d 30%, #991b1b 70%, #dc2626 100%);
+    border-radius: 14px;
+    padding: 14px 28px;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.18);
+    position: relative;
+    overflow: hidden;
+    min-height: 68px;
+}
+
+.hero-header::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Ccircle cx='30' cy='30' r='20'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    pointer-events: none;
+}
+
+.hero-left {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.hero-ribbon {
+    font-size: 2rem;
+    line-height: 1;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+}
+
+.hero-text h1 {
+    font-family: 'Sora', sans-serif !important;
+    font-size: 1.22rem !important;
+    font-weight: 800 !important;
+    color: white !important;
+    margin: 0 0 3px 0 !important;
+    letter-spacing: -0.01em;
+    line-height: 1.2;
+}
+
+.hero-text p {
+    font-size: 0.78rem;
+    color: rgba(255,255,255,0.8);
+    margin: 0;
+    font-weight: 400;
+}
+
+.hero-right {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    opacity: 0.85;
+}
+
+.hero-stat {
+    text-align: center;
+    color: white;
+}
+
+.hero-stat .stat-num {
+    font-family: 'Sora', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 800;
+    display: block;
+    line-height: 1;
+}
+
+.hero-stat .stat-lbl {
+    font-size: 0.65rem;
+    opacity: 0.8;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    display: block;
+    margin-top: 2px;
+}
+
+.hero-divider {
+    width: 1px;
+    height: 36px;
+    background: rgba(255,255,255,0.25);
+}
+
+/* ═══════════════════════════════════════════
+   SECTION LABELS
+═══════════════════════════════════════════ */
+.sec-label {
+    font-family: 'Sora', sans-serif;
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: #6b7280;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin: 0 0 6px 0;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.sec-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: #e5e7eb;
+    margin-left: 6px;
+}
+
+/* ═══════════════════════════════════════════
+   PATIENT SUMMARY CARD
+═══════════════════════════════════════════ */
+.summary-card {
+    background: white;
+    border-radius: 12px;
+    padding: 12px 16px;
+    box-shadow: 0 1px 8px rgba(0,0,0,0.07);
+    border: 1px solid #f3f4f6;
+}
+
+/* Compact dataframe */
+.stDataFrame {
+    border-radius: 8px !important;
+    overflow: hidden !important;
+}
+
+.stDataFrame table {
+    font-size: 0.78rem !important;
+}
+
+.stDataFrame thead th {
+    background: #f9fafb !important;
+    font-size: 0.72rem !important;
+    font-weight: 700 !important;
+    color: #374151 !important;
+    padding: 5px 10px !important;
     text-transform: uppercase;
     letter-spacing: 0.05em;
 }
 
-div[data-testid="stSidebar"] [data-testid="stMarkdownContainer"] p,
-div[data-testid="stSidebar"] [data-testid="stMarkdownContainer"] h2 {
-    color: #c8e6c9 !important;
+.stDataFrame tbody td {
+    padding: 4px 10px !important;
+    font-size: 0.78rem !important;
+    color: #4b5563 !important;
+    border-bottom: 1px solid #f9fafb !important;
 }
 
-/* Sidebar input controls */
-div[data-testid="stSidebar"] input,
-div[data-testid="stSidebar"] select,
-div[data-testid="stSidebar"] .stSelectbox > div > div {
-    background: rgba(255,255,255,0.1) !important;
-    border: 1px solid rgba(76, 175, 80, 0.4) !important;
-    color: white !important;
-    border-radius: 8px !important;
-}
-
-/* Predict button */
-div[data-testid="stSidebar"] .stButton > button {
-    background: linear-gradient(135deg, #c62828, #e53935) !important;
-    color: white !important;
-    border: none !important;
-    border-radius: 30px !important;
-    font-family: 'Nunito', sans-serif !important;
-    font-weight: 700 !important;
-    font-size: 0.95rem !important;
-    letter-spacing: 0.04em !important;
-    padding: 0.6rem 1.2rem !important;
-    box-shadow: 0 4px 18px rgba(198,40,40,0.4) !important;
-    transition: all 0.25s ease !important;
-}
-
-div[data-testid="stSidebar"] .stButton > button:hover {
-    background: linear-gradient(135deg, #b71c1c, #c62828) !important;
-    box-shadow: 0 6px 24px rgba(183,28,28,0.5) !important;
-    transform: translateY(-1px);
-}
-
-/* ── Header Banner ── */
-.header-card {
-    background: linear-gradient(135deg, #1b5e20 0%, #2e7d32 40%, #c62828 100%);
-    border-radius: 16px;
-    padding: 20px 32px;
-    margin-bottom: 18px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.12);
+/* ═══════════════════════════════════════════
+   RESULT CARDS
+═══════════════════════════════════════════ */
+.result-card {
+    border-radius: 12px;
+    padding: 14px 18px;
+    text-align: center;
     position: relative;
     overflow: hidden;
 }
 
-.header-card::before {
-    content: "🎗️";
-    position: absolute;
-    right: 24px;
-    top: 50%;
-    transform: translateY(-50%);
-    font-size: 3.5rem;
-    opacity: 0.25;
-}
-
-.header-card h1 {
-    font-size: 1.5rem;
-    margin: 0 0 4px 0;
-    color: white;
-    font-family: 'Playfair Display', serif;
-}
-
-.header-card p {
-    font-size: 0.92rem;
-    color: rgba(255,255,255,0.85);
-    margin: 0;
-}
-
-/* ── Section Titles ── */
-.section-title {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.1rem;
-    color: #1b5e20;
-    margin: 18px 0 10px 0;
-    border-bottom: 2px solid #a5d6a7;
-    padding-bottom: 6px;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-}
-
-/* ── Result Cards ── */
 .result-alive {
-    background: linear-gradient(135deg, #e8f5e9, #f1f8e9);
-    border: 2px solid #4caf50;
-    border-radius: 14px;
-    padding: 20px 24px;
-    text-align: center;
-    box-shadow: 0 4px 18px rgba(76,175,80,0.18);
-}
-
-.result-alive h2 {
-    color: #1b5e20;
-    font-size: 1.6rem;
-    margin: 6px 0 4px;
-}
-
-.result-alive p {
-    color: #388e3c;
-    font-size: 0.9rem;
-    margin: 0;
+    background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
+    box-shadow: 0 4px 20px rgba(22,163,74,0.3);
 }
 
 .result-dead {
-    background: linear-gradient(135deg, #ffebee, #fce4ec);
-    border: 2px solid #e53935;
-    border-radius: 14px;
-    padding: 20px 24px;
-    text-align: center;
-    box-shadow: 0 4px 18px rgba(229,57,53,0.18);
+    background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+    box-shadow: 0 4px 20px rgba(220,38,38,0.3);
 }
 
-.result-dead h2 {
-    color: #b71c1c;
+.result-card .rc-icon {
     font-size: 1.6rem;
-    margin: 6px 0 4px;
+    display: block;
+    margin-bottom: 4px;
+    line-height: 1;
 }
 
-.result-dead p {
-    color: #c62828;
-    font-size: 0.9rem;
-    margin: 0;
+.result-card .rc-verdict {
+    font-family: 'Sora', sans-serif;
+    font-size: 1.3rem;
+    font-weight: 800;
+    color: white;
+    display: block;
+    line-height: 1.1;
+    margin-bottom: 4px;
 }
 
-/* ── Model Badge ── */
-.model-badge {
+.result-card .rc-sub {
+    font-size: 0.75rem;
+    color: rgba(255,255,255,0.82);
+    display: block;
+}
+
+.result-card .rc-badge {
     display: inline-block;
+    background: rgba(255,255,255,0.2);
+    border: 1px solid rgba(255,255,255,0.3);
     border-radius: 20px;
-    padding: 4px 14px;
-    font-size: 0.78rem;
+    padding: 2px 10px;
+    font-size: 0.68rem;
     font-weight: 700;
-    letter-spacing: 0.05em;
+    color: white;
     text-transform: uppercase;
+    letter-spacing: 0.07em;
     margin-bottom: 8px;
 }
 
-.badge-alive {
-    background: #1b5e20;
-    color: white;
-}
-
-.badge-dead {
-    background: #c62828;
-    color: white;
-}
-
-/* ── Probability Card ── */
-.prob-card {
+/* Confidence pill row */
+.conf-row {
     background: white;
-    border: 1px solid #e0e0e0;
-    border-radius: 12px;
-    padding: 14px 20px;
-    margin-top: 12px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.06);
-    text-align: center;
-    font-size: 0.95rem;
+    border-radius: 10px;
+    padding: 10px 14px;
+    margin-top: 8px;
+    box-shadow: 0 1px 6px rgba(0,0,0,0.07);
+    border: 1px solid #f3f4f6;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
 }
 
-.prob-card strong {
-    color: #263238;
+.conf-label {
+    font-size: 0.72rem;
+    color: #6b7280;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
+.conf-value {
+    font-family: 'Sora', sans-serif;
     font-size: 1rem;
+    font-weight: 800;
+    color: #111827;
 }
 
-/* ── Divider ── */
-hr {
-    border: none;
-    border-top: 2px dashed #c8e6c9;
-    margin: 18px 0;
+.conf-alive {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #16a34a;
 }
 
-/* ── Dataframe Styling ── */
-.stDataFrame {
-    border-radius: 10px !important;
-    overflow: hidden !important;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+.conf-dead {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #dc2626;
 }
 
-/* ── Info Box ── */
+/* ═══════════════════════════════════════════
+   CHART CONTAINERS
+═══════════════════════════════════════════ */
+.chart-card {
+    background: white;
+    border-radius: 12px;
+    padding: 10px 14px 8px 14px;
+    box-shadow: 0 1px 8px rgba(0,0,0,0.07);
+    border: 1px solid #f3f4f6;
+}
+
+/* Info box */
 .stAlert {
     border-radius: 10px !important;
-    border-left: 4px solid #4caf50 !important;
-    background: #f1f8e9 !important;
+    border-left: 3px solid #16a34a !important;
+    background: #f0fdf4 !important;
+    padding: 8px 14px !important;
+    font-size: 0.8rem !important;
 }
+
+/* Caption */
+.stCaption {
+    font-size: 0.7rem !important;
+    color: #9ca3af !important;
+    margin-top: 4px !important;
+}
+
+/* Remove extra streamlit spacers */
+div.stVerticalBlock > div[style] {
+    gap: 0 !important;
+}
+
+.element-container {
+    margin-bottom: 0 !important;
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -240,7 +459,7 @@ def load_bundle(path):
     return joblib.load(path)
 
 if not os.path.exists(PKL_PATH):
-    st.error(f"❌ `{PKL_PATH}` not found.")
+    st.error(f"❌ `{PKL_PATH}` not found. Place it in the same directory.")
     st.stop()
 
 bundle        = load_bundle(PKL_PATH)
@@ -252,20 +471,23 @@ MODEL_NAMES   = ["Logistic Regression", "KNN", "Random Forest", "Decision Tree",
                  "SVM", "Gradient Boosting", "Naive Bayes", "XGBoost"]
 SCALED_MODELS = {"Logistic Regression", "KNN", "SVM", "Naive Bayes"}
 
-# ── HEADER ──
-st.markdown("""
-<div class="header-card">
-    <h1>🎗️ Breast Cancer Survival Predictor</h1>
-    <p>Enter patient details in the sidebar, choose a model, and click <strong>Predict</strong> to assess survival likelihood.</p>
-</div>
-""", unsafe_allow_html=True)
-
-# ── SIDEBAR ──
+# ══════════════════════════════
+# SIDEBAR
+# ══════════════════════════════
 with st.sidebar:
-    st.markdown("## ⚙️ Model")
-    selected_model = st.selectbox("Select Model", MODEL_NAMES)
-    st.markdown("---")
-    st.markdown("## 🧬 Patient Details")
+    st.markdown("""
+    <div style="background:linear-gradient(135deg,#16a34a,#dc2626);padding:14px 18px 12px;margin:-1rem -1rem 0;border-bottom:1px solid #1f2937;">
+        <div style="font-family:'Sora',sans-serif;font-size:0.95rem;font-weight:800;color:white;letter-spacing:-0.01em;">🎗️ BC Predictor</div>
+        <div style="font-size:0.68rem;color:rgba(255,255,255,0.75);margin-top:2px;">Survival Analysis Dashboard</div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    st.markdown("<div style='height:10px'></div>", unsafe_allow_html=True)
+    st.markdown("### 🤖 Model")
+    selected_model = st.selectbox("Algorithm", MODEL_NAMES, label_visibility="collapsed")
+
+    st.markdown("<div style='height:4px'></div>", unsafe_allow_html=True)
+    st.markdown("### 🧬 Patient Input")
 
     survival_months    = st.number_input("Survival Months",        min_value=1,  max_value=120, value=40, step=1)
     tumor_size         = st.number_input("Tumor Size (mm)",         min_value=1,  max_value=200, value=25, step=1)
@@ -275,9 +497,54 @@ with st.sidebar:
     progesterone       = st.selectbox("Progesterone Status",        ["Positive", "Negative"])
     a_stage            = st.selectbox("A Stage",                    ["Regional", "Distant"])
 
-    predict_btn = st.button("🔍 Predict", use_container_width=True)
+    st.markdown("<div style='height:8px'></div>", unsafe_allow_html=True)
+    predict_btn = st.button("⚡  RUN PREDICTION", use_container_width=True)
 
-# ── FEATURE VECTOR ──
+    st.markdown("""
+    <div style="margin-top:12px;padding:10px 14px;background:#1f2937;border-radius:10px;border:1px solid #374151;">
+        <div style="font-size:0.68rem;color:#6b7280;text-transform:uppercase;letter-spacing:0.08em;font-weight:700;margin-bottom:6px;">Model Info</div>
+        <div style="font-size:0.75rem;color:#9ca3af;">8 algorithms available<br>Multi-class binary output<br>Real-time inference</div>
+    </div>
+    """, unsafe_allow_html=True)
+
+
+# ══════════════════════════════
+# HERO HEADER (full-width)
+# ══════════════════════════════
+st.markdown(f"""
+<div class="hero-header">
+    <div class="hero-left">
+        <div class="hero-ribbon">🎗️</div>
+        <div class="hero-text">
+            <h1>Breast Cancer Survival Predictor</h1>
+            <p>ML-powered clinical decision support &nbsp;·&nbsp; 8 Ensemble Models &nbsp;·&nbsp; Real-time Inference</p>
+        </div>
+    </div>
+    <div class="hero-right">
+        <div class="hero-stat">
+            <span class="stat-num">8</span>
+            <span class="stat-lbl">Models</span>
+        </div>
+        <div class="hero-divider"></div>
+        <div class="hero-stat">
+            <span class="stat-num">{len(features)}</span>
+            <span class="stat-lbl">Features</span>
+        </div>
+        <div class="hero-divider"></div>
+        <div class="hero-stat">
+            <span class="stat-num">Binary</span>
+            <span class="stat-lbl">Output</span>
+        </div>
+        <div class="hero-divider"></div>
+        <div style="font-size:2.2rem;opacity:0.7;">🏥</div>
+    </div>
+</div>
+""", unsafe_allow_html=True)
+
+
+# ══════════════════════════════
+# FEATURE BUILDERS
+# ══════════════════════════════
 def build_input():
     node_ratio = reginol_node_pos / max(regional_node_exam, 1)
     mapping = {
@@ -297,109 +564,118 @@ def get_input_for_model(model_name):
     X = build_input()
     return scaler.transform(X) if model_name in SCALED_MODELS else X.values
 
+
+# ══════════════════════════════
+# CHARTS
+# ══════════════════════════════
 def chart_confidence(alive_p, dead_p, model_name):
-    fig, ax = plt.subplots(figsize=(6, 2.2))
-    fig.patch.set_facecolor("#ffffff")
-    ax.set_facecolor("#ffffff")
+    fig, ax = plt.subplots(figsize=(4.8, 1.5))
+    fig.patch.set_facecolor("white")
+    ax.set_facecolor("white")
 
-    colors = ["#e53935", "#43a047"]
-    bars = ax.barh(
-        ["Dead", "Alive"],
-        [dead_p, alive_p],
-        color=colors,
-        height=0.5,
-        edgecolor="none"
-    )
+    vals   = [dead_p, alive_p]
+    labels = ["Dead", "Alive"]
+    colors = ["#dc2626", "#16a34a"]
 
-    for bar, val in zip(bars, [dead_p, alive_p]):
-        ax.text(
-            val + 1.5,
-            bar.get_y() + bar.get_height() / 2,
-            f"{val:.1f}%",
-            va="center",
-            fontsize=10,
-            fontweight="bold",
-            color="#263238"
-        )
+    bars = ax.barh(labels, vals, color=colors, height=0.45, edgecolor="none")
 
-    ax.set_xlim(0, 120)
-    ax.set_xlabel("Probability (%)", fontsize=8, color="#607d8b")
-    ax.set_title(f"Confidence — {model_name}", fontsize=10, color="#1b5e20", fontweight="bold", pad=10)
-    ax.tick_params(labelsize=9, colors="#455a64")
+    for bar, val in zip(bars, vals):
+        ax.text(val + 1.2, bar.get_y() + bar.get_height()/2,
+                f"{val:.1f}%", va="center", fontsize=8.5,
+                fontweight="bold", color="#1f2937")
+
+    ax.set_xlim(0, 118)
+    ax.set_xlabel("Probability (%)", fontsize=7, color="#9ca3af")
+    ax.set_title(f"Confidence — {model_name}", fontsize=8, color="#374151",
+                 fontweight="bold", pad=6)
+    ax.tick_params(labelsize=7.5, colors="#6b7280")
 
     for spine in ax.spines.values():
         spine.set_visible(False)
+    ax.xaxis.grid(True, color="#f3f4f6", linewidth=0.8)
+    ax.set_axisbelow(True)
 
-    ax.xaxis.set_tick_params(color="#cfd8dc")
-    ax.yaxis.set_tick_params(color="#cfd8dc")
-    plt.tight_layout()
+    plt.tight_layout(pad=0.4)
     return fig
+
 
 def chart_model_comparison():
     results = []
     for name in MODEL_NAMES:
-        m = bundle[name]
+        m  = bundle[name]
         Xi = get_input_for_model(name)
         if hasattr(m, "predict_proba"):
             p = m.predict_proba(Xi)[0]
-            results.append({"Model": name, "Alive %": p[0] * 100, "Dead %": p[1] * 100})
+            results.append({"Model": name, "Alive %": p[0]*100, "Dead %": p[1]*100})
         else:
             pred = m.predict(Xi)[0]
-            results.append({"Model": name, "Alive %": 100 if pred == 0 else 0, "Dead %": 100 if pred == 1 else 0})
+            results.append({"Model": name,
+                             "Alive %": 100 if pred == 0 else 0,
+                             "Dead %":  100 if pred == 1 else 0})
 
     df = pd.DataFrame(results)
-
-    fig, ax = plt.subplots(figsize=(7, 3))
-    fig.patch.set_facecolor("#ffffff")
-    ax.set_facecolor("#fafafa")
+    fig, ax = plt.subplots(figsize=(4.8, 2.2))
+    fig.patch.set_facecolor("white")
+    ax.set_facecolor("white")
 
     x = np.arange(len(df))
-    w = 0.35
+    w = 0.32
 
-    ax.bar(x - w/2, df["Alive %"], width=w, color="#43a047", label="Alive", edgecolor="none", alpha=0.9)
-    ax.bar(x + w/2, df["Dead %"],  width=w, color="#e53935", label="Dead",  edgecolor="none", alpha=0.9)
+    ax.bar(x - w/2, df["Alive %"], width=w, color="#16a34a",
+           label="Alive", edgecolor="none", alpha=0.88)
+    ax.bar(x + w/2, df["Dead %"],  width=w, color="#dc2626",
+           label="Dead",  edgecolor="none", alpha=0.88)
 
-    ax.set_xticks(x)
-    ax.set_xticklabels(df["Model"], rotation=28, ha="right", fontsize=7.5, color="#455a64")
-    ax.set_ylabel("Probability (%)", fontsize=8, color="#607d8b")
-    ax.set_title("All Models — Side-by-Side Comparison", fontsize=10, color="#1b5e20", fontweight="bold", pad=10)
-    ax.set_ylim(0, 118)
-
-    ax.legend(fontsize=8, framealpha=0.6, edgecolor="#e0e0e0")
-
-    # Highlight selected model
+    # Highlight selected
     idx = MODEL_NAMES.index(selected_model)
-    ax.axvspan(idx - 0.5, idx + 0.5, color="#e8f5e9", alpha=0.7, zorder=0)
-    ax.annotate("▲ selected", xy=(idx, 105), ha="center", fontsize=7, color="#2e7d32", fontweight="600")
+    ax.axvspan(idx - 0.5, idx + 0.5, color="#f0fdf4", alpha=0.9, zorder=0)
+
+    short_names = [n.replace(" ", "\n") for n in df["Model"]]
+    ax.set_xticks(x)
+    ax.set_xticklabels(short_names, fontsize=6.5, color="#6b7280", ha="center")
+    ax.set_ylabel("Probability (%)", fontsize=7, color="#9ca3af")
+    ax.set_title("All Models Comparison", fontsize=8, color="#374151",
+                 fontweight="bold", pad=6)
+    ax.set_ylim(0, 118)
+    ax.legend(fontsize=7, framealpha=0, loc="upper right")
 
     for spine in ax.spines.values():
         spine.set_visible(False)
-
-    ax.yaxis.grid(True, color="#eeeeee", linewidth=0.8)
+    ax.yaxis.grid(True, color="#f3f4f6", linewidth=0.8)
     ax.set_axisbelow(True)
+    ax.tick_params(axis="y", labelsize=7, colors="#9ca3af")
 
-    plt.tight_layout()
+    plt.tight_layout(pad=0.4)
     return fig
 
-# ── LAYOUT ──
-col1, col2 = st.columns([1.5, 1], gap="large")
 
-with col1:
-    st.markdown('<div class="section-title">📋 Patient Summary</div>', unsafe_allow_html=True)
+# ══════════════════════════════
+# MAIN LAYOUT — 2 columns top
+# ══════════════════════════════
+col_left, col_right = st.columns([1.45, 1], gap="medium")
+
+# ── Patient Summary ──
+with col_left:
+    st.markdown('<p class="sec-label">📋 Patient Summary</p>', unsafe_allow_html=True)
     node_ratio = reginol_node_pos / max(regional_node_exam, 1)
-    summary = pd.DataFrame({
-        "Feature": ["Survival Months", "Tumor Size (mm)", "Reginol Node Positive",
-                    "Regional Node Examined", "Node Positive Ratio",
-                    "Estrogen Status", "Progesterone Status", "A Stage"],
-        "Value":   [str(survival_months), str(tumor_size), str(reginol_node_pos),
-                    str(regional_node_exam), f"{node_ratio:.4f}",
-                    estrogen, progesterone, a_stage]
-    })
-    st.dataframe(summary, use_container_width=True, hide_index=True)
-    st.caption(f"🔧 Features used: {', '.join(features)}")
 
-with col2:
-    st.markdown('<div class="section-title">🤖 Prediction Result</div>', unsafe_allow_html=True)
+    summary = pd.DataFrame({
+        "Feature": ["Survival Months", "Tumor Size (mm)", "Node Positive",
+                    "Node Examined", "Node Ratio",
+                    "Estrogen", "Progesterone", "A Stage"],
+        "Value": [str(survival_months), str(tumor_size),
+                  str(reginol_node_pos), str(regional_node_exam),
+                  f"{node_ratio:.4f}", estrogen, progesterone, a_stage]
+    })
+
+    st.markdown('<div class="summary-card">', unsafe_allow_html=True)
+    st.dataframe(summary, use_container_width=True, hide_index=True, height=232)
+    st.markdown('</div>', unsafe_allow_html=True)
+    st.caption(f"Active model: **{selected_model}**  ·  Features: {len(features)}")
+
+# ── Prediction Result ──
+with col_right:
+    st.markdown('<p class="sec-label">🤖 Prediction Result</p>', unsafe_allow_html=True)
 
     if predict_btn:
         model   = bundle[selected_model]
@@ -409,42 +685,66 @@ with col2:
         pred_encoded = model.predict(X_input)[0]
         pred_label   = label_encoder.inverse_transform([pred_encoded])[0]
 
-        if pred_label == "Alive":
-            st.markdown(f"""
-            <div class="result-alive">
-                <span class="model-badge badge-alive">{selected_model}</span>
-                <h2>✅ Alive</h2>
-                <p>The model predicts the patient is likely to survive.</p>
-            </div>""", unsafe_allow_html=True)
-        else:
-            st.markdown(f"""
-            <div class="result-dead">
-                <span class="model-badge badge-dead">{selected_model}</span>
-                <h2>⚠️ High Risk</h2>
-                <p>The model predicts a higher risk of mortality.</p>
-            </div>""", unsafe_allow_html=True)
-
-        alive_p, dead_p = 50.0, 50.0
-        if hasattr(model, "predict_proba"):
+        alive_p, dead_p, confidence = 50.0, 50.0, 50.0
+        has_proba = hasattr(model, "predict_proba")
+        if has_proba:
             proba      = model.predict_proba(X_input)[0]
             confidence = proba[pred_encoded] * 100
             alive_p    = proba[0] * 100
             dead_p     = proba[1] * 100
+
+        if pred_label == "Alive":
             st.markdown(f"""
-            <div class="prob-card">
-                <strong>Confidence: {confidence:.1f}%</strong><br>
-                <span style="color:#2e7d32; font-weight:600;">🟢 Alive: {alive_p:.1f}%</span>
-                &nbsp;&nbsp;|&nbsp;&nbsp;
-                <span style="color:#c62828; font-weight:600;">🔴 Dead: {dead_p:.1f}%</span>
+            <div class="result-card result-alive">
+                <span class="rc-badge">{selected_model}</span>
+                <span class="rc-icon">✅</span>
+                <span class="rc-verdict">Likely Alive</span>
+                <span class="rc-sub">Model predicts patient survival</span>
+            </div>""", unsafe_allow_html=True)
+        else:
+            st.markdown(f"""
+            <div class="result-card result-dead">
+                <span class="rc-badge">{selected_model}</span>
+                <span class="rc-icon">⚠️</span>
+                <span class="rc-verdict">High Risk</span>
+                <span class="rc-sub">Model predicts elevated mortality risk</span>
+            </div>""", unsafe_allow_html=True)
+
+        if has_proba:
+            st.markdown(f"""
+            <div class="conf-row">
+                <div>
+                    <div class="conf-label">Confidence</div>
+                    <div class="conf-value">{confidence:.1f}%</div>
+                </div>
+                <div style="text-align:center;">
+                    <div class="conf-label">Alive</div>
+                    <div class="conf-alive">🟢 {alive_p:.1f}%</div>
+                </div>
+                <div style="text-align:center;">
+                    <div class="conf-label">Dead</div>
+                    <div class="conf-dead">🔴 {dead_p:.1f}%</div>
+                </div>
             </div>""", unsafe_allow_html=True)
     else:
-        st.info("👈 Fill in patient details in the sidebar and click **Predict**.")
+        st.info("👈 Configure patient details in the sidebar and click **RUN PREDICTION**.")
+        alive_p, dead_p = 50.0, 50.0
 
-# ── CHARTS ──
+# ══════════════════════════════
+# CHARTS ROW (below summary)
+# ══════════════════════════════
 if predict_btn:
-    st.markdown("---")
-    st.markdown('<div class="section-title">📊 Prediction Confidence</div>', unsafe_allow_html=True)
-    st.pyplot(chart_confidence(alive_p, dead_p, selected_model))
+    st.markdown("<div style='height:8px'></div>", unsafe_allow_html=True)
+    c1, c2 = st.columns(2, gap="medium")
 
-    st.markdown('<div class="section-title">📊 All Models Comparison</div>', unsafe_allow_html=True)
-    st.pyplot(chart_model_comparison())
+    with c1:
+        st.markdown('<p class="sec-label">📊 Prediction Confidence</p>', unsafe_allow_html=True)
+        st.markdown('<div class="chart-card">', unsafe_allow_html=True)
+        st.pyplot(chart_confidence(alive_p, dead_p, selected_model), use_container_width=True)
+        st.markdown('</div>', unsafe_allow_html=True)
+
+    with c2:
+        st.markdown('<p class="sec-label">📊 All Models Comparison</p>', unsafe_allow_html=True)
+        st.markdown('<div class="chart-card">', unsafe_allow_html=True)
+        st.pyplot(chart_model_comparison(), use_container_width=True)
+        st.markdown('</div>', unsafe_allow_html=True)
