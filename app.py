@@ -19,29 +19,27 @@ html, body, [class*="css"] { font-family: 'Outfit', sans-serif; }
 
 /* Hide Streamlit chrome */
 #MainMenu, footer, header { display: none !important; }
-[data-testid="collapsedControl"],
-[data-testid="stSidebarCollapseButton"] { display: none !important; }
 section[data-testid="stSidebar"] { display: none !important; }
+[data-testid="collapsedControl"] { display: none !important; }
 
 /* App background */
 .stApp { background: #f5eded; }
 .block-container {
     padding-top: 0 !important;
-    padding-left: 2rem !important;
-    padding-right: 2rem !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
     max-width: 100% !important;
 }
 
 /* ── Header ── */
 .header-bar {
     background: linear-gradient(90deg, #6b0f1a 0%, #b91c1c 55%, #dc2626 100%);
-    border-radius: 0 0 16px 16px;
-    padding: 16px 32px;
+    padding: 16px 36px;
     display: flex;
     align-items: center;
     gap: 18px;
-    margin-bottom: 0;
     box-shadow: 0 4px 24px rgba(107,15,26,0.3);
+    margin-bottom: 0;
 }
 .header-bar h1 {
     font-family: 'Playfair Display', serif;
@@ -50,77 +48,66 @@ section[data-testid="stSidebar"] { display: none !important; }
 .header-bar p { font-size: 0.77rem; color: rgba(255,255,255,0.72); margin: 0; }
 .hbar-divider { width:1px; height:40px; background:rgba(255,255,255,0.22); margin: 0 8px; }
 
-/* ── Input panel: target the actual streamlit container wrapping our columns ── */
-div[data-testid="stHorizontalBlock"]:first-of-type {
-    background: #1c0608 !important;
-    border-radius: 0 0 14px 14px !important;
-    padding: 14px 20px 16px 20px !important;
-    margin-bottom: 22px !important;
-    box-shadow: 0 6px 24px rgba(0,0,0,0.22) !important;
-    gap: 12px !important;
+/* ── Input strip ── */
+.input-strip {
+    background: #1c0608;
+    padding: 14px 36px 16px 36px;
+    margin-bottom: 24px;
+    box-shadow: 0 6px 24px rgba(0,0,0,0.18);
 }
 
-/* All labels and text inside the input row */
-div[data-testid="stHorizontalBlock"]:first-of-type label,
-div[data-testid="stHorizontalBlock"]:first-of-type p,
-div[data-testid="stHorizontalBlock"]:first-of-type span,
-div[data-testid="stHorizontalBlock"]:first-of-type div {
-    color: #f0dada !important;
-}
-div[data-testid="stHorizontalBlock"]:first-of-type label {
+/* Style every widget INSIDE the input strip container */
+.input-strip label,
+.input-strip .stSelectbox label,
+.input-strip .stNumberInput label {
+    color: #f9c8c8 !important;
     font-size: 0.75rem !important;
     font-weight: 500 !important;
-    color: #f9c8c8 !important;
 }
-
-/* Inputs inside the panel */
-div[data-testid="stHorizontalBlock"]:first-of-type input {
-    background: #2e0a0a !important;
+.input-strip input {
+    background-color: #2e0a0a !important;
     border: 1px solid #5c1f1f !important;
     color: #f5e0e0 !important;
     border-radius: 6px !important;
 }
-div[data-testid="stHorizontalBlock"]:first-of-type [data-baseweb="select"] > div {
-    background: #2e0a0a !important;
+.input-strip [data-baseweb="select"] > div {
+    background-color: #2e0a0a !important;
     border: 1px solid #5c1f1f !important;
     color: #f5e0e0 !important;
     border-radius: 6px !important;
 }
-div[data-testid="stHorizontalBlock"]:first-of-type [data-baseweb="select"] svg {
-    fill: #f0dada !important;
-}
-
-/* Number input +/- buttons */
-div[data-testid="stHorizontalBlock"]:first-of-type button[data-testid="stNumberInputStepDown"],
-div[data-testid="stHorizontalBlock"]:first-of-type button[data-testid="stNumberInputStepUp"] {
+.input-strip [data-baseweb="select"] svg { fill: #f0dada !important; }
+.input-strip [data-baseweb="popover"] ul { background: #2e0a0a !important; }
+.input-strip button[data-testid="stNumberInputStepDown"],
+.input-strip button[data-testid="stNumberInputStepUp"] {
     background: #3d0f0f !important;
     border-color: #5c1f1f !important;
     color: #f0dada !important;
 }
-
-/* Predict button */
-div[data-testid="stHorizontalBlock"]:first-of-type .stButton > button {
+.input-strip .stButton > button {
     background: linear-gradient(135deg, #9b1414, #dc2626) !important;
-    color: white !important;
-    border: none !important;
-    border-radius: 8px !important;
-    font-weight: 600 !important;
-    font-size: 0.88rem !important;
-    padding: 10px 16px !important;
+    color: white !important; border: none !important;
+    border-radius: 8px !important; font-weight: 600 !important;
+    font-size: 0.88rem !important; padding: 10px 16px !important;
     box-shadow: 0 4px 14px rgba(185,28,28,0.45) !important;
-    width: 100% !important;
-    margin-top: 20px !important;
+    width: 100% !important; margin-top: 20px !important;
 }
-div[data-testid="stHorizontalBlock"]:first-of-type .stButton > button:hover {
-    opacity: 0.85 !important;
+.input-strip .stButton > button:hover { opacity: 0.85 !important; }
+/* force all text colours in strip */
+.input-strip * { color: #f0dada; }
+
+/* ── Main content area ── */
+.main-content {
+    padding: 0 36px 36px 36px;
+    background: #f5eded;
 }
 
 /* ── Section titles ── */
 .section-title {
     font-family: 'Playfair Display', serif;
-    font-size: 1rem; color: #6b0f1a;
+    font-size: 1.05rem; color: #6b0f1a;
     border-bottom: 1px solid #dcc5c5;
-    padding-bottom: 5px; margin: 0 0 10px 0;
+    padding-bottom: 5px; margin: 0 0 12px 0;
 }
 
 /* ── Result cards ── */
@@ -177,7 +164,7 @@ def load_bundle(path):
     return joblib.load(path)
 
 if not os.path.exists(PKL_PATH):
-    st.error(f"❌ `{PKL_PATH}` not found. Place it alongside this script.")
+    st.error(f"❌ `{PKL_PATH}` not found.")
     st.stop()
 
 bundle        = load_bundle(PKL_PATH)
@@ -202,30 +189,24 @@ st.markdown("""
         8 Models &nbsp;·&nbsp; LR · KNN · RF · DT · SVM · GB · NB · XGB
     </p>
 </div>
+<div class="input-strip">
 """, unsafe_allow_html=True)
 
-# ── INPUT ROW (first stHorizontalBlock — gets dark styling via CSS) ──
-c1, c2, c3, c4, c5, c6, c7, c8, c9 = st.columns([1.6, 1.1, 1.1, 1, 1, 1, 1, 1, 0.9])
-
-with c1:
-    selected_model = st.selectbox("🤖 Model", MODEL_NAMES)
-with c2:
-    survival_months = st.number_input("Survival Months", min_value=1, max_value=120, value=40, step=1)
-with c3:
-    tumor_size = st.number_input("Tumor Size (mm)", min_value=1, max_value=200, value=25, step=1)
-with c4:
-    reginol_node_pos = st.number_input("Node Positive", min_value=0, max_value=50, value=2, step=1)
-with c5:
-    regional_node_exam = st.number_input("Node Examined", min_value=1, max_value=60, value=10, step=1)
-with c6:
-    estrogen = st.selectbox("Estrogen", ["Positive", "Negative"])
-with c7:
-    progesterone = st.selectbox("Progesterone", ["Positive", "Negative"])
-with c8:
-    a_stage = st.selectbox("A Stage", ["Regional", "Distant"])
+# ── INPUT ROW inside the dark strip ──
+c1,c2,c3,c4,c5,c6,c7,c8,c9 = st.columns([1.6,1.1,1.1,1,1,1,1,1,0.9])
+with c1: selected_model     = st.selectbox("🤖 Model", MODEL_NAMES)
+with c2: survival_months    = st.number_input("Survival Months",  min_value=1,  max_value=120, value=40,  step=1)
+with c3: tumor_size         = st.number_input("Tumor Size (mm)",  min_value=1,  max_value=200, value=25,  step=1)
+with c4: reginol_node_pos   = st.number_input("Node Positive",    min_value=0,  max_value=50,  value=2,   step=1)
+with c5: regional_node_exam = st.number_input("Node Examined",    min_value=1,  max_value=60,  value=10,  step=1)
+with c6: estrogen           = st.selectbox("Estrogen",            ["Positive","Negative"])
+with c7: progesterone       = st.selectbox("Progesterone",        ["Positive","Negative"])
+with c8: a_stage            = st.selectbox("A Stage",             ["Regional","Distant"])
 with c9:
     st.markdown("<div style='height:27px'></div>", unsafe_allow_html=True)
     predict_btn = st.button("🔍 Predict", use_container_width=True)
+
+st.markdown("</div>", unsafe_allow_html=True)  # close input-strip
 
 # ── HELPERS ──
 def build_input():
@@ -252,12 +233,12 @@ def chart_confidence(alive_p, dead_p, model_name):
     fig, ax = plt.subplots(figsize=CHART_SIZE)
     fig.patch.set_facecolor("white")
     ax.set_facecolor("white")
-    bars = ax.barh(["Deceased", "Alive"], [dead_p, alive_p],
-                   color=["#b91c1c", "#15803d"], height=0.44, edgecolor="none")
+    bars = ax.barh(["Deceased","Alive"], [dead_p, alive_p],
+                   color=["#b91c1c","#15803d"], height=0.44, edgecolor="none")
     for bar, val in zip(bars, [dead_p, alive_p]):
-        ax.text(val + 1.5, bar.get_y() + bar.get_height() / 2,
+        ax.text(val+1.5, bar.get_y()+bar.get_height()/2,
                 f"{val:.1f}%", va="center", fontsize=11, fontweight="bold", color="#333")
-    ax.set_xlim(0, 125)
+    ax.set_xlim(0,125)
     ax.set_xlabel("Probability (%)", fontsize=8, color="#aaa")
     ax.set_title(f"Prediction Confidence\n{model_name}", fontsize=9,
                  color="#6b0f1a", fontweight="bold", pad=10)
@@ -273,43 +254,46 @@ def chart_model_comparison():
         Xi = get_input_for_model(name)
         if hasattr(m, "predict_proba"):
             p = m.predict_proba(Xi)[0]
-            results.append({"Model": name, "Alive %": p[0]*100, "Dead %": p[1]*100})
+            results.append({"Model":name,"Alive %":p[0]*100,"Dead %":p[1]*100})
         else:
             pred = m.predict(Xi)[0]
-            results.append({"Model": name,
-                             "Alive %": 100 if pred == 0 else 0,
-                             "Dead %":  100 if pred == 1 else 0})
+            results.append({"Model":name,
+                             "Alive %":100 if pred==0 else 0,
+                             "Dead %": 100 if pred==1 else 0})
     df = pd.DataFrame(results)
     fig, ax = plt.subplots(figsize=CHART_SIZE)
     fig.patch.set_facecolor("white")
     ax.set_facecolor("white")
     x, w = np.arange(len(df)), 0.35
-    ax.bar(x - w/2, df["Alive %"], width=w, color="#15803d", label="Alive", edgecolor="none")
-    ax.bar(x + w/2, df["Dead %"],  width=w, color="#b91c1c", label="Dead",  edgecolor="none")
+    ax.bar(x-w/2, df["Alive %"], width=w, color="#15803d", label="Alive", edgecolor="none")
+    ax.bar(x+w/2, df["Dead %"],  width=w, color="#b91c1c", label="Dead",  edgecolor="none")
     ax.set_xticks(x)
-    ax.set_xticklabels([n.replace(" ", "\n") for n in df["Model"]], fontsize=6.5, color="#444")
+    ax.set_xticklabels([n.replace(" ","\n") for n in df["Model"]], fontsize=6.5, color="#444")
     ax.set_ylabel("Probability (%)", fontsize=8, color="#aaa")
     ax.set_title("All Models — Alive vs Deceased", fontsize=9,
                  color="#6b0f1a", fontweight="bold", pad=10)
-    ax.set_ylim(0, 120)
+    ax.set_ylim(0,120)
     ax.legend(fontsize=8, framealpha=0, loc="upper right")
     ax.tick_params(colors="#777", labelsize=7)
     for sp in ax.spines.values(): sp.set_visible(False)
     idx = MODEL_NAMES.index(selected_model)
-    ax.axvspan(idx - 0.5, idx + 0.5, color="#6b0f1a", alpha=0.08, zorder=0)
+    ax.axvspan(idx-0.5, idx+0.5, color="#6b0f1a", alpha=0.08, zorder=0)
     plt.tight_layout(pad=1.0)
     return fig
 
-# ── ROW 1: Patient Summary | Prediction Result ──
+# ── MAIN CONTENT (light background) ──
+st.markdown('<div class="main-content">', unsafe_allow_html=True)
+
+# ROW 1: Patient Summary | Prediction Result
 node_ratio = reginol_node_pos / max(regional_node_exam, 1)
 col1, col2 = st.columns([1.2, 1], gap="large")
 
 with col1:
     st.markdown('<div class="section-title">📋 Patient Summary</div>', unsafe_allow_html=True)
     summary = pd.DataFrame({
-        "Feature": ["Survival Months", "Tumor Size (mm)", "Node Positive",
-                    "Node Examined", "Node Positive Ratio",
-                    "Estrogen Status", "Progesterone Status", "A Stage"],
+        "Feature": ["Survival Months","Tumor Size (mm)","Node Positive",
+                    "Node Examined","Node Positive Ratio",
+                    "Estrogen Status","Progesterone Status","A Stage"],
         "Value":   [str(survival_months), str(tumor_size), str(reginol_node_pos),
                     str(regional_node_exam), f"{node_ratio:.4f}",
                     estrogen, progesterone, a_stage]
@@ -359,18 +343,18 @@ with col2:
     else:
         st.info("⬆️ Fill in patient details above and click **Predict**.")
 
-# ── ROW 2: Both Charts Same Height ──
+# ROW 2: Both Charts
 if predict_btn:
     st.markdown('<div class="section-title" style="margin-top:22px">📊 Analytics</div>',
                 unsafe_allow_html=True)
     ch1, ch2 = st.columns(2, gap="large")
-
     with ch1:
         st.markdown('<div class="chart-wrap">', unsafe_allow_html=True)
         st.pyplot(chart_confidence(alive_p, dead_p, selected_model), use_container_width=True)
         st.markdown('</div>', unsafe_allow_html=True)
-
     with ch2:
         st.markdown('<div class="chart-wrap">', unsafe_allow_html=True)
         st.pyplot(chart_model_comparison(), use_container_width=True)
         st.markdown('</div>', unsafe_allow_html=True)
+
+st.markdown('</div>', unsafe_allow_html=True)  # close main-content
