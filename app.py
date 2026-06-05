@@ -69,7 +69,7 @@ div[data-testid="stSidebar"] * { color: white !important; }
 # ─────────────────────────────────────────────
 #  LOAD PKL
 # ─────────────────────────────────────────────
-PKL_PATH = "breast_cancer_models.pkl"
+PKL_PATH = "breast_cancer_models_compressed.pkl"
 
 @st.cache_resource
 def load_bundle(path):
