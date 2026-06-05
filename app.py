@@ -149,13 +149,13 @@ with col2:
         if pred_label == "Alive":
             st.markdown(f"""<div class="result-alive">
                 <div class="model-badge">{selected_model}</div>
-                <h2>✅ Alive</h2>
+                <h2>Alive</h2>
                 <p>The model predicts the patient is likely to survive.</p>
             </div>""", unsafe_allow_html=True)
         else:
             st.markdown(f"""<div class="result-dead">
                 <div class="model-badge">{selected_model}</div>
-                <h2>⚠️ Deceased</h2>
+                <h2>Dead</h2>
                 <p>The model predicts a higher risk of mortality.</p>
             </div>""", unsafe_allow_html=True)
 
@@ -170,9 +170,7 @@ with col2:
                 <span style="color:#c0392b">Dead: {dead_p:.1f}%</span>
             </div>""", unsafe_allow_html=True)
 
-        st.markdown("""<div class="info-box">
-            ⚠️ <strong>Disclaimer:</strong> This tool is for educational purposes only
-            and is not a substitute for clinical diagnosis.
+        st.markdown("""<div class="info-box"
         </div>""", unsafe_allow_html=True)
     else:
         st.info("👈 Fill in patient details in the sidebar and click **Predict**.")
