@@ -21,8 +21,7 @@ h1, h2, h3 {
 }
 
 .stApp {
-    background: linear-gradient(135deg, #eff6ff 0%, #ffffff 100%);
-}
+    background: linear-gradient(135deg, #fafafa, #f3f4f6);}
 
 div[data-testid="stSidebar"] {
     background: #0f172a;
