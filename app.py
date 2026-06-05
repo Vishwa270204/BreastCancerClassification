@@ -238,10 +238,17 @@ with col2:
             </div>""", unsafe_allow_html=True)
 
         
+       
         # ── CHART 1: Confidence ──
         st.markdown('<div class="section-title">📊 Prediction Confidence</div>', unsafe_allow_html=True)
         st.pyplot(chart_confidence(alive_p, dead_p, selected_model))
 
+        # ── CHART 2: All Models ──
+        st.markdown('<div class="section-title">📊 All Models Comparison</div>', unsafe_allow_html=True)
+        st.pyplot(chart_model_comparison())
+
+    else:
+        st.info("👈 Fill in patient details in the sidebar and click **Predict**.")
 
     else:
         st.info("👈 Fill in patient details in the sidebar and click **Predict**.")
