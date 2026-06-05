@@ -66,7 +66,6 @@ section[data-testid="stSidebar"] { display: none !important; }
     color: #1e3a8a;
     font-size: 1rem;
     font-weight: 700;
-    letter-spacing: 0.15em;
     text-transform: uppercase;
     padding: 10px 0 6px 0;
     border-bottom: 1px solid rgba(252,165,165,0.15);
@@ -227,7 +226,7 @@ st.markdown("""
 st.markdown('<div class="input-zone-wrapper">', unsafe_allow_html=True)
 
 # Row label
-st.markdown('<div class="input-section-label">⚙️ Patient Input Parameters</div>', unsafe_allow_html=True)
+st.markdown('<div class="section-title">⚙️ Patient Input Parameters</div>', unsafe_allow_html=True)
 
 # ROW 1 — Numerical inputs
 r1c1, r1c2, r1c3, r1c4, r1c5 = st.columns([1.4, 1.2, 1.2, 1.2, 1.2])
