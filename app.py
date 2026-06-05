@@ -530,38 +530,12 @@ with st.sidebar:
 # ══════════════════════════════
 # HERO HEADER
 # ══════════════════════════════
-st.markdown(f"""
-<div class="hero-wrap">
-  <div class="hero-inner">
-    <div class="hero-brand">
-      <div class="hero-icon">🎗️</div>
-      <div>
-        <div class="hero-title">Breast Cancer Survival Predictor</div>
-        <div class="hero-sub">
-          ML-powered clinical decision support &nbsp;·&nbsp;
-          8 Ensemble Models &nbsp;·&nbsp; Real-time Inference
-        </div>
-      </div>
+st.markdown("""
+<div class="hero-header">
+    <div class="hero-content">
+        <h1>🎗 Breast Cancer Survival Predictor</h1>
+        <p>AI-Powered Survival Risk Assessment Dashboard</p>
     </div>
-    <div class="hero-stats">
-      <div class="hstat">
-        <span class="hstat-num">8</span>
-        <span class="hstat-lbl">Models</span>
-      </div>
-      <div class="hstat-div"></div>
-      <div class="hstat">
-        <span class="hstat-num">{len(features)}</span>
-        <span class="hstat-lbl">Features</span>
-      </div>
-      <div class="hstat-div"></div>
-      <div class="hstat">
-        <span class="hstat-num">Binary</span>
-        <span class="hstat-lbl">Output</span>
-      </div>
-      <div class="hstat-div"></div>
-      <div style="font-size:2.6rem;opacity:0.65;line-height:1;">🏥</div>
-    </div>
-  </div>
 </div>
 """, unsafe_allow_html=True)
 
