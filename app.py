@@ -19,37 +19,18 @@ st.set_page_config(
 st.markdown("""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500;600&display=swap');
-
-html, body, [class*="css"] {
-    font-family: 'DM Sans', sans-serif;
-}
+html, body, [class*="css"] { font-family: 'DM Sans', sans-serif; }
 h1, h2, h3 { font-family: 'DM Serif Display', serif; }
-
-.stApp {
-    background: linear-gradient(135deg, #fdf6f0 0%, #fce8e8 100%);
-}
-
-div[data-testid="stSidebar"] {
-    background: #1a0a0a;
-}
+.stApp { background: linear-gradient(135deg, #fdf6f0 0%, #fce8e8 100%); }
+div[data-testid="stSidebar"] { background: #1a0a0a; }
 div[data-testid="stSidebar"] * { color: white !important; }
-div[data-testid="stSidebar"] .stSelectbox label,
-div[data-testid="stSidebar"] .stNumberInput label {
-    color: #f8c8c8 !important;
-    font-weight: 500;
-}
-
 .header-card {
     background: linear-gradient(135deg, #8b1a1a, #c0392b);
-    border-radius: 16px;
-    padding: 32px 40px;
-    color: white;
-    margin-bottom: 28px;
-    box-shadow: 0 8px 32px rgba(139,26,26,0.3);
+    border-radius: 16px; padding: 32px 40px; color: white;
+    margin-bottom: 28px; box-shadow: 0 8px 32px rgba(139,26,26,0.3);
 }
 .header-card h1 { font-size: 2.2rem; margin: 0 0 8px 0; color: white; }
 .header-card p  { font-size: 1rem; opacity: 0.85; margin: 0; }
-
 .result-alive {
     background: linear-gradient(135deg, #1a5c2a, #27ae60);
     border-radius: 14px; padding: 28px 36px; color: white;
@@ -62,7 +43,6 @@ div[data-testid="stSidebar"] .stNumberInput label {
 }
 .result-alive h2, .result-dead h2 { font-size: 2rem; margin: 0 0 8px 0; color: white; }
 .result-alive p,  .result-dead p  { font-size: 1.05rem; opacity: 0.9; margin: 0; }
-
 .prob-card {
     background: white; border-radius: 12px; padding: 18px 24px;
     margin-top: 14px; box-shadow: 0 2px 12px rgba(0,0,0,0.08);
@@ -76,8 +56,7 @@ div[data-testid="stSidebar"] .stNumberInput label {
 .info-box {
     background: white; border-left: 4px solid #c0392b;
     border-radius: 8px; padding: 14px 18px; margin-top: 12px;
-    font-size: 0.88rem; color: #333;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    font-size: 0.88rem; color: #333; box-shadow: 0 2px 8px rgba(0,0,0,0.06);
 }
 .section-title {
     font-family: 'DM Serif Display', serif; font-size: 1.2rem;
@@ -88,9 +67,9 @@ div[data-testid="stSidebar"] .stNumberInput label {
 """, unsafe_allow_html=True)
 
 # ─────────────────────────────────────────────
-#  LOAD PKL  (joblib, single file)
+#  LOAD PKL
 # ─────────────────────────────────────────────
-PKL_PATH = "breast_cancer_models_compressed.pkl"
+PKL_PATH = "breast_cancer_models.pkl"
 
 @st.cache_resource
 def load_bundle(path):
@@ -102,17 +81,13 @@ if not os.path.exists(PKL_PATH):
 
 bundle        = load_bundle(PKL_PATH)
 scaler        = bundle["scaler"]
-features      = bundle["features"]          # ['Survival Months', 'Node_Positive_Ratio',
-                                             #  'Estrogen Status', 'Progesterone Status',
-                                             #  'Tumor Size', 'A Stage']
-label_encoder = bundle["label_encoder"]     # classes: ['Alive', 'Dead']
+features      = bundle["features"]
+label_encoder = bundle["label_encoder"]
 
-MODEL_NAMES = [
+MODEL_NAMES   = [
     "Logistic Regression", "KNN", "Random Forest", "Decision Tree",
     "SVM", "Gradient Boosting", "Naive Bayes", "XGBoost"
 ]
-
-# Models whose training used X_train_scaled
 SCALED_MODELS = {"Logistic Regression", "KNN", "SVM", "Naive Bayes"}
 
 # ─────────────────────────────────────────────
@@ -126,7 +101,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # ─────────────────────────────────────────────
-#  SIDEBAR — INPUTS
+#  SIDEBAR
 # ─────────────────────────────────────────────
 with st.sidebar:
     st.markdown("## ⚙️ Model")
@@ -135,39 +110,30 @@ with st.sidebar:
     st.markdown("---")
     st.markdown("## 🧬 Patient Details")
 
-    survival_months = st.number_input(
-        "Survival Months", min_value=1, max_value=120, value=40, step=1,
-        help="Number of months the patient has survived."
-    )
-    tumor_size = st.number_input(
-        "Tumor Size (mm)", min_value=1, max_value=200, value=25, step=1
-    )
-    reginol_node_positive = st.number_input(
-        "Reginol Node Positive", min_value=0, max_value=50, value=2, step=1
-    )
-    regional_node_examined = st.number_input(
-        "Regional Node Examined", min_value=1, max_value=60, value=10, step=1
-    )
-    estrogen = st.selectbox("Estrogen Status", ["Positive", "Negative"])
+    survival_months = st.number_input("Survival Months", min_value=1, max_value=120, value=40, step=1)
+    tumor_size      = st.number_input("Tumor Size (mm)", min_value=1, max_value=200, value=25, step=1)
+    reginol_node_positive  = st.number_input("Reginol Node Positive",  min_value=0, max_value=50, value=2, step=1)
+    regional_node_examined = st.number_input("Regional Node Examined", min_value=1, max_value=60, value=10, step=1)
+    estrogen     = st.selectbox("Estrogen Status",     ["Positive", "Negative"])
     progesterone = st.selectbox("Progesterone Status", ["Positive", "Negative"])
-    a_stage = st.selectbox("A Stage", ["Regional", "Distant"])
+    a_stage      = st.selectbox("A Stage",             ["Regional", "Distant"])
 
     predict_btn = st.button("🔍 Predict", use_container_width=True)
 
 # ─────────────────────────────────────────────
-#  FEATURE VECTOR  (only 6 features the model uses)
+#  FEATURE VECTOR  — matches features list exactly
 # ─────────────────────────────────────────────
 def build_input():
     node_positive_ratio = reginol_node_positive / max(regional_node_examined, 1)
     row = {
-        "Survival Months":      survival_months,
-        "Node_Positive_Ratio":  node_positive_ratio,
-        "Estrogen Status":      0 if estrogen == "Positive" else 1,
-        "Progesterone Status":  0 if progesterone == "Positive" else 1,
-        "Tumor Size":           tumor_size,
-        "A Stage":              0 if a_stage == "Regional" else 1,
+        "Survival Months":     survival_months,
+        "Node_Positive_Ratio": node_positive_ratio,
+        "Estrogen Status":     0 if estrogen == "Positive" else 1,
+        "Progesterone Status": 0 if progesterone == "Positive" else 1,
+        "Tumor Size":          tumor_size,
+        "A Stage":             0 if a_stage == "Regional" else 1,
     }
-    return pd.DataFrame([row])[features]   # ensure correct column order
+    return pd.DataFrame([row])[features]
 
 # ─────────────────────────────────────────────
 #  LAYOUT
@@ -176,7 +142,10 @@ col1, col2 = st.columns([1.5, 1], gap="large")
 
 with col1:
     st.markdown('<div class="section-title">📋 Patient Summary</div>', unsafe_allow_html=True)
+
     node_ratio = reginol_node_positive / max(regional_node_examined, 1)
+
+    # All values as strings to avoid Arrow mixed-type error
     summary = pd.DataFrame({
         "Feature": [
             "Survival Months", "Tumor Size (mm)", "Node Positive",
@@ -184,31 +153,25 @@ with col1:
             "Estrogen Status", "Progesterone Status", "A Stage"
         ],
         "Value": [
-            survival_months, tumor_size, reginol_node_positive,
-            regional_node_examined, f"{node_ratio:.4f}",
+            str(survival_months), str(tumor_size),
+            str(reginol_node_positive), str(regional_node_examined),
+            f"{node_ratio:.4f}",
             estrogen, progesterone, a_stage
         ]
     })
     st.dataframe(summary, use_container_width=True, hide_index=True)
-
-    st.markdown('<div class="section-title">ℹ️ Features Used by Model</div>', unsafe_allow_html=True)
-    st.caption(", ".join(features))
+    st.caption(f"Features used by model: {', '.join(features)}")
 
 with col2:
     st.markdown('<div class="section-title">🤖 Prediction Result</div>', unsafe_allow_html=True)
 
     if predict_btn:
-        model = bundle[selected_model]
-        X = build_input()
-
-        # Scale only for models that were trained on scaled data
-        if selected_model in SCALED_MODELS:
-            X_input = scaler.transform(X)
-        else:
-            X_input = X.values
+        model  = bundle[selected_model]
+        X      = build_input()
+        X_input = scaler.transform(X) if selected_model in SCALED_MODELS else X.values
 
         pred_encoded = model.predict(X_input)[0]
-        pred_label   = label_encoder.inverse_transform([pred_encoded])[0]  # 'Alive' or 'Dead'
+        pred_label   = label_encoder.inverse_transform([pred_encoded])[0]
 
         if pred_label == "Alive":
             st.markdown(f"""
@@ -225,7 +188,6 @@ with col2:
                 <p>The model predicts a higher risk of mortality.</p>
             </div>""", unsafe_allow_html=True)
 
-        # Confidence
         if hasattr(model, "predict_proba"):
             proba      = model.predict_proba(X_input)[0]
             confidence = proba[pred_encoded] * 100
@@ -243,6 +205,5 @@ with col2:
             ⚠️ <strong>Disclaimer:</strong> This tool is for educational purposes only
             and is not a substitute for clinical diagnosis.
         </div>""", unsafe_allow_html=True)
-
     else:
         st.info("👈 Fill in patient details in the sidebar and click **Predict**.")
