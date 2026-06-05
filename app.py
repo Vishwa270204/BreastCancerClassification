@@ -179,7 +179,7 @@ st.markdown("""
         <h1>Breast Cancer Survival Predictor</h1>
     </div>
     """, unsafe_allow_html=True)
-/* ── Input strip: target the container by its data-testid key ── */
+ # Input strip: target the container by its data-testid key
 [data-testid="stVerticalBlock"]:has(> [data-testid="stVerticalBlockBorderWrapper"] > div > [data-testid="stHorizontalBlock"] > div:nth-child(9) button) {
     background: #1c0608;
     padding: 14px 20px 18px 20px;
