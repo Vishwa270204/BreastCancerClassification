@@ -116,13 +116,13 @@ section[data-testid="stSidebar"] { display: none !important; }
     background: linear-gradient(135deg, #14532d, #15803d);
     border-radius: 12px; padding: 22px 26px;
     color: white; text-align: center;
-    box-shadow: 0 6px 20px rgba(21,128,61,0.25);
+   
 }
 .result-dead {
     background: linear-gradient(135deg, #6b0f1a, #b91c1c);
     border-radius: 12px; padding: 22px 26px;
     color: white; text-align: center;
-    box-shadow: 0 6px 20px rgba(185,28,28,0.25);
+    
 }
 .result-alive h2, .result-dead h2 {
     font-family: 'Playfair Display', serif;
