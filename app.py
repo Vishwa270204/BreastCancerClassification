@@ -63,8 +63,9 @@ section[data-testid="stSidebar"] { display: none !important; }
 }
 .input-section-label {
     font-family: 'Playfair Display', serif;
-    color: #fca5a5;
-    font-size: 0.7rem;
+    color: #1e3a8a;
+    font-size: 1rem;
+    font-weight: 700;
     letter-spacing: 0.15em;
     text-transform: uppercase;
     padding: 10px 0 6px 0;
@@ -84,15 +85,17 @@ section[data-testid="stSidebar"] { display: none !important; }
 .input-zone-wrapper p,
 .input-zone-wrapper span,
 .input-zone-wrapper div { color: #f0dada !important; }
-.input-zone-wrapper input {
-    background-color: #3d0a0a !important;
-    border: 1px solid #7f1d1d !important;
-    color: #fef2f2 !important;
-    border-radius: 6px !important;
+.input-zone-wrapper input,
+.input-zone-wrapper [data-baseweb="select"] > div {
+    background-color: #ffffff !important;
+    border: 2px solid #d4d4d4 !important;
+    color: #333333 !important;
+    border-radius: 8px !important;
 }
-.input-zone-wrapper input:focus {
-    border-color: #ef4444 !important;
-    box-shadow: 0 0 0 2px rgba(239,68,68,0.25) !important;
+
+.input-zone-wrapper input:focus,
+.input-zone-wrapper [data-baseweb="select"] > div:focus {
+    border-color: #2563eb !important;
 }
 .input-zone-wrapper [data-baseweb="select"] > div {
     background-color: #3d0a0a !important;
