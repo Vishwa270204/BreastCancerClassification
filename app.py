@@ -338,7 +338,7 @@ if predict_btn:
         st.markdown('</div>', unsafe_allow_html=True)
     with ch2:
         st.markdown('<div class="chart-wrap">', unsafe_allow_html=True)
-        st.pyplot(chart__comparison(), use_container_width=True)
+        st.pyplot(chart_model_comparison(), use_container_width=True)
         st.markdown('</div>', unsafe_allow_html=True)
 
 st.markdown('</div>', unsafe_allow_html=True)
