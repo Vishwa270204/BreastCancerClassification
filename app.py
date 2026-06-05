@@ -525,21 +525,7 @@ with st.sidebar:
     st.markdown("---")
     predict_btn = st.button("⚡  RUN PREDICTION", use_container_width=True)
 
-    st.markdown("""
-    <div style="margin-top:16px;padding:14px 16px;background:#1f2937;
-                border-radius:10px;border:1px solid #374151;">
-        <div style="font-size:0.74rem;color:#6b7280;text-transform:uppercase;
-                    letter-spacing:0.09em;font-weight:700;margin-bottom:8px;">
-            System Info
-        </div>
-        <div style="font-size:0.85rem;color:#9ca3af;line-height:1.8;">
-            8 algorithms available<br>
-            Binary classification<br>
-            Real-time inference
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
-
+    
 
 # ══════════════════════════════
 # HERO HEADER
