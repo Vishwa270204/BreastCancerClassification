@@ -39,7 +39,6 @@ section[data-testid="stSidebar"] { display: none !important; }
     align-items: center;
     gap: 18px;
     box-shadow: 0 4px 24px rgba(107,15,26,0.3);
-    margin-bottom: 0;
 }
 .header-bar h1 {
     font-family: 'Playfair Display', serif;
@@ -48,57 +47,59 @@ section[data-testid="stSidebar"] { display: none !important; }
 .header-bar p { font-size: 0.77rem; color: rgba(255,255,255,0.72); margin: 0; }
 .hbar-divider { width:1px; height:40px; background:rgba(255,255,255,0.22); margin: 0 8px; }
 
-/* ── Input strip ── */
-.input-strip {
+/* ── Input strip: target the container by its data-testid key ── */
+[data-testid="stVerticalBlock"]:has(> [data-testid="stVerticalBlockBorderWrapper"] > div > [data-testid="stHorizontalBlock"] > div:nth-child(9) button) {
     background: #1c0608;
-    padding: 14px 36px 16px 36px;
-    margin-bottom: 24px;
-    box-shadow: 0 6px 24px rgba(0,0,0,0.18);
+    padding: 14px 20px 18px 20px;
+    margin-bottom: 0;
 }
 
-/* Style every widget INSIDE the input strip container */
-.input-strip label,
-.input-strip .stSelectbox label,
-.input-strip .stNumberInput label {
-    color: #f9c8c8 !important;
-    font-size: 0.75rem !important;
-    font-weight: 500 !important;
+/* Simpler approach: use a landmark class on a container */
+.input-zone {
+    background: #1c0608 !important;
+    padding: 12px 36px 18px 36px !important;
+    margin-bottom: 24px !important;
 }
-.input-strip input {
+/* Labels in input zone */
+.input-zone label { color: #f9c8c8 !important; font-size: 0.75rem !important; font-weight: 500 !important; }
+.input-zone p, .input-zone span, .input-zone div { color: #f0dada !important; }
+/* Text inputs */
+.input-zone input {
     background-color: #2e0a0a !important;
-    border: 1px solid #5c1f1f !important;
+    border: 1px solid #5c2020 !important;
     color: #f5e0e0 !important;
     border-radius: 6px !important;
 }
-.input-strip [data-baseweb="select"] > div {
+/* Selectbox */
+.input-zone [data-baseweb="select"] > div {
     background-color: #2e0a0a !important;
-    border: 1px solid #5c1f1f !important;
+    border: 1px solid #5c2020 !important;
     color: #f5e0e0 !important;
     border-radius: 6px !important;
 }
-.input-strip [data-baseweb="select"] svg { fill: #f0dada !important; }
-.input-strip [data-baseweb="popover"] ul { background: #2e0a0a !important; }
-.input-strip button[data-testid="stNumberInputStepDown"],
-.input-strip button[data-testid="stNumberInputStepUp"] {
-    background: #3d0f0f !important;
-    border-color: #5c1f1f !important;
+.input-zone [data-baseweb="select"] svg { fill: #f0dada !important; }
+/* Stepper +/- */
+.input-zone button[data-testid="stNumberInputStepDown"],
+.input-zone button[data-testid="stNumberInputStepUp"] {
+    background: #3d1010 !important;
+    border-color: #5c2020 !important;
     color: #f0dada !important;
 }
-.input-strip .stButton > button {
+/* Predict button */
+.input-zone .stButton > button {
     background: linear-gradient(135deg, #9b1414, #dc2626) !important;
     color: white !important; border: none !important;
     border-radius: 8px !important; font-weight: 600 !important;
-    font-size: 0.88rem !important; padding: 10px 16px !important;
+    font-size: 0.9rem !important;
     box-shadow: 0 4px 14px rgba(185,28,28,0.45) !important;
-    width: 100% !important; margin-top: 20px !important;
+    width: 100% !important;
+    height: 42px !important;
 }
-.input-strip .stButton > button:hover { opacity: 0.85 !important; }
-/* force all text colours in strip */
-.input-strip * { color: #f0dada; }
+.input-zone .stButton > button:hover { opacity: 0.85 !important; }
 
-/* ── Main content area ── */
-.main-content {
-    padding: 0 36px 36px 36px;
+/* ── Main content ── */
+.main-zone {
+    padding: 20px 36px 36px 36px;
     background: #f5eded;
 }
 
@@ -189,10 +190,11 @@ st.markdown("""
         8 Models &nbsp;·&nbsp; LR · KNN · RF · DT · SVM · GB · NB · XGB
     </p>
 </div>
-<div class="input-strip">
 """, unsafe_allow_html=True)
 
-# ── INPUT ROW inside the dark strip ──
+# ── INPUT ZONE — open wrapper div, render columns, close div ──
+st.markdown('<div class="input-zone">', unsafe_allow_html=True)
+
 c1,c2,c3,c4,c5,c6,c7,c8,c9 = st.columns([1.6,1.1,1.1,1,1,1,1,1,0.9])
 with c1: selected_model     = st.selectbox("🤖 Model", MODEL_NAMES)
 with c2: survival_months    = st.number_input("Survival Months",  min_value=1,  max_value=120, value=40,  step=1)
@@ -206,7 +208,7 @@ with c9:
     st.markdown("<div style='height:27px'></div>", unsafe_allow_html=True)
     predict_btn = st.button("🔍 Predict", use_container_width=True)
 
-st.markdown("</div>", unsafe_allow_html=True)  # close input-strip
+st.markdown('</div>', unsafe_allow_html=True)
 
 # ── HELPERS ──
 def build_input():
@@ -281,10 +283,9 @@ def chart_model_comparison():
     plt.tight_layout(pad=1.0)
     return fig
 
-# ── MAIN CONTENT (light background) ──
-st.markdown('<div class="main-content">', unsafe_allow_html=True)
+# ── MAIN ZONE ──
+st.markdown('<div class="main-zone">', unsafe_allow_html=True)
 
-# ROW 1: Patient Summary | Prediction Result
 node_ratio = reginol_node_pos / max(regional_node_exam, 1)
 col1, col2 = st.columns([1.2, 1], gap="large")
 
@@ -303,13 +304,13 @@ with col1:
 
 with col2:
     st.markdown('<div class="section-title">🤖 Prediction Result</div>', unsafe_allow_html=True)
+    alive_p, dead_p = 50.0, 50.0
 
     if predict_btn:
         model        = bundle[selected_model]
         X_input      = get_input_for_model(selected_model)
         pred_encoded = model.predict(X_input)[0]
         pred_label   = label_encoder.inverse_transform([pred_encoded])[0]
-        alive_p, dead_p = 50.0, 50.0
 
         if pred_label == "Alive":
             st.markdown(f"""<div class="result-alive">
@@ -343,7 +344,6 @@ with col2:
     else:
         st.info("⬆️ Fill in patient details above and click **Predict**.")
 
-# ROW 2: Both Charts
 if predict_btn:
     st.markdown('<div class="section-title" style="margin-top:22px">📊 Analytics</div>',
                 unsafe_allow_html=True)
@@ -357,4 +357,4 @@ if predict_btn:
         st.pyplot(chart_model_comparison(), use_container_width=True)
         st.markdown('</div>', unsafe_allow_html=True)
 
-st.markdown('</div>', unsafe_allow_html=True)  # close main-content
+st.markdown('</div>', unsafe_allow_html=True)
