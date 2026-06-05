@@ -14,6 +14,48 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
+# ── JavaScript: force sidebar open and block collapse button ──
+st.components.v1.html("""
+<script>
+(function keepSidebarOpen() {
+    function forceSidebar() {
+        // Remove collapsed attribute from sidebar wrapper
+        var sidebar = window.parent.document.querySelector('[data-testid="stSidebar"]');
+        if (sidebar) {
+            sidebar.removeAttribute('aria-hidden');
+            sidebar.style.display = 'flex';
+            sidebar.style.visibility = 'visible';
+            sidebar.style.width = '320px';
+            sidebar.style.minWidth = '320px';
+            sidebar.style.transform = 'none';
+            sidebar.style.position = 'relative';
+        }
+
+        // Hide all collapse / close buttons
+        var selectors = [
+            '[data-testid="collapsedControl"]',
+            '[data-testid="stSidebarCollapseButton"]',
+            'button[aria-label="Close sidebar"]',
+            'button[aria-label="Collapse sidebar"]',
+            'button[title="Close sidebar"]',
+            '[data-testid="baseButton-headerNoPadding"]'
+        ];
+        selectors.forEach(function(sel) {
+            window.parent.document.querySelectorAll(sel).forEach(function(el) {
+                el.style.display = 'none';
+                el.style.visibility = 'hidden';
+                el.style.pointerEvents = 'none';
+            });
+        });
+    }
+
+    // Run immediately and on a short interval to catch re-renders
+    forceSidebar();
+    setInterval(forceSidebar, 300);
+})();
+</script>
+""", height=0)
+
 st.markdown("""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Sora:wght@600;700;800&display=swap');
@@ -21,141 +63,155 @@ st.markdown("""
 /* ── BASE ── */
 *, *::before, *::after { box-sizing: border-box; }
 
-html, body, [class*="css"], .stApp {
+html, body, [class*="css"] {
     font-family: 'Plus Jakarta Sans', sans-serif !important;
     font-size: 15px !important;
 }
 
 .stApp { background: #f0f2f6 !important; }
 
-/* ── kill default streamlit top bar ── */
 header[data-testid="stHeader"] { display: none !important; }
 
-/* ── main content padding ── */
 .main .block-container {
-    padding: 1rem 1.6rem 1rem 1.6rem !important;
+    padding: 1rem 1.8rem 1rem 1.8rem !important;
     max-width: 100% !important;
 }
 
-/* ══════════════════════════════════════
-   SIDEBAR — always visible, no collapse
-══════════════════════════════════════ */
-div[data-testid="stSidebar"] {
+/* ══════════════════════════════════════════
+   SIDEBAR — force always open
+══════════════════════════════════════════ */
+section[data-testid="stSidebar"] {
+    display: flex !important;
+    visibility: visible !important;
+    width: 320px !important;
+    min-width: 320px !important;
+    max-width: 320px !important;
+    transform: none !important;
+    position: relative !important;
     background: #111827 !important;
-    border-right: 2px solid #1f2937 !important;
-    min-width: 310px !important;
-    width: 310px !important;
+    border-right: 2px solid #374151 !important;
+    flex-shrink: 0 !important;
 }
 
-/* Hide every possible collapse / close button variant */
+section[data-testid="stSidebar"] > div:first-child {
+    width: 320px !important;
+    min-width: 320px !important;
+}
+
+/* Kill ALL collapse buttons */
 button[data-testid="baseButton-headerNoPadding"],
 div[data-testid="collapsedControl"],
-div[data-testid="stSidebarCollapseButton"],
+section[data-testid="stSidebar"] button[kind="header"],
+[data-testid="stSidebarCollapseButton"],
 button[aria-label="Close sidebar"],
 button[aria-label="Collapse sidebar"],
 button[title="Close sidebar"],
-[class*="collapsedControl"] {
+[class*="collapsedControl"],
+[class*="sSidebarCollapse"] {
     display: none !important;
+    visibility: hidden !important;
     width: 0 !important;
     height: 0 !important;
     overflow: hidden !important;
     pointer-events: none !important;
+    position: absolute !important;
+    opacity: 0 !important;
 }
 
-div[data-testid="stSidebar"] * {
+/* Sidebar text */
+section[data-testid="stSidebar"] * {
     color: #e5e7eb !important;
     font-family: 'Plus Jakarta Sans', sans-serif !important;
 }
 
-div[data-testid="stSidebar"] label {
+/* Sidebar labels */
+section[data-testid="stSidebar"] label {
     color: #9ca3af !important;
-    font-size: 0.82rem !important;
+    font-size: 0.85rem !important;
     font-weight: 600 !important;
     text-transform: uppercase !important;
     letter-spacing: 0.07em !important;
 }
 
-div[data-testid="stSidebar"] input,
-div[data-testid="stSidebar"] [data-baseweb="select"] > div {
+/* Sidebar inputs */
+section[data-testid="stSidebar"] input,
+section[data-testid="stSidebar"] [data-baseweb="select"] > div {
     background: #1f2937 !important;
     border: 1px solid #374151 !important;
     border-radius: 8px !important;
     color: #f3f4f6 !important;
-    font-size: 0.92rem !important;
-    min-height: 38px !important;
+    font-size: 0.95rem !important;
+    min-height: 40px !important;
 }
 
-div[data-testid="stSidebar"] input:focus,
-div[data-testid="stSidebar"] [data-baseweb="select"] > div:focus-within {
+section[data-testid="stSidebar"] input:focus,
+section[data-testid="stSidebar"] [data-baseweb="select"] > div:focus-within {
     border-color: #16a34a !important;
-    box-shadow: 0 0 0 2px rgba(22,163,74,0.25) !important;
+    box-shadow: 0 0 0 3px rgba(22,163,74,0.2) !important;
 }
 
-div[data-testid="stSidebar"] h1,
-div[data-testid="stSidebar"] h2,
-div[data-testid="stSidebar"] h3 {
+/* Sidebar headings */
+section[data-testid="stSidebar"] h1,
+section[data-testid="stSidebar"] h2,
+section[data-testid="stSidebar"] h3 {
     color: #f9fafb !important;
     font-family: 'Sora', sans-serif !important;
-    font-size: 0.75rem !important;
+    font-size: 0.78rem !important;
     font-weight: 700 !important;
     letter-spacing: 0.12em !important;
     text-transform: uppercase !important;
-    margin: 4px 0 2px 0 !important;
+    margin: 6px 0 4px 0 !important;
 }
 
-div[data-testid="stSidebar"] hr {
+section[data-testid="stSidebar"] hr {
     border-color: #374151 !important;
-    margin: 10px 0 !important;
+    margin: 12px 0 !important;
 }
 
-div[data-testid="stSidebar"] .stSelectbox,
-div[data-testid="stSidebar"] .stNumberInput {
-    margin-bottom: 8px !important;
+section[data-testid="stSidebar"] .stSelectbox,
+section[data-testid="stSidebar"] .stNumberInput {
+    margin-bottom: 10px !important;
 }
 
 /* Predict button */
-div[data-testid="stSidebar"] .stButton > button {
+section[data-testid="stSidebar"] .stButton > button {
     background: linear-gradient(135deg, #16a34a 0%, #dc2626 100%) !important;
     color: white !important;
     border: none !important;
     border-radius: 10px !important;
     font-family: 'Sora', sans-serif !important;
     font-weight: 700 !important;
-    font-size: 0.88rem !important;
+    font-size: 0.9rem !important;
     letter-spacing: 0.07em !important;
     text-transform: uppercase !important;
-    padding: 0.65rem 1rem !important;
+    padding: 0.7rem 1rem !important;
     width: 100% !important;
     box-shadow: 0 4px 18px rgba(22,163,74,0.35) !important;
     transition: all 0.2s ease !important;
     cursor: pointer !important;
-    margin-top: 4px !important;
+    margin-top: 6px !important;
 }
 
-div[data-testid="stSidebar"] .stButton > button:hover {
-    box-shadow: 0 6px 24px rgba(22,163,74,0.5) !important;
+section[data-testid="stSidebar"] .stButton > button:hover {
+    box-shadow: 0 6px 26px rgba(22,163,74,0.5) !important;
     transform: translateY(-2px) !important;
-    filter: brightness(1.08) !important;
+    filter: brightness(1.1) !important;
 }
 
-/* ══════════════════════════════════════
-   HERO HEADER — full-width inside main
-   Uses a wide negative margin trick to
-   escape block-container padding and
-   span edge-to-edge
-══════════════════════════════════════ */
+/* ══════════════════════════════════════════
+   HERO HEADER — full-width via negative margins
+══════════════════════════════════════════ */
 .hero-wrap {
-    margin: -1rem -1.6rem 1rem -1.6rem;
-    padding: 0 1.6rem;
+    margin: -1rem -1.8rem 1.2rem -1.8rem;
+    padding: 0 2rem;
     background: linear-gradient(110deg, #0f172a 0%, #1e293b 45%, #0f172a 100%);
     border-bottom: 3px solid transparent;
-    border-image: linear-gradient(90deg, #16a34a, #dc2626) 1;
-    box-shadow: 0 4px 24px rgba(0,0,0,0.25);
+    border-image: linear-gradient(90deg, #16a34a 0%, #dc2626 100%) 1;
+    box-shadow: 0 6px 28px rgba(0,0,0,0.3);
     position: relative;
     overflow: hidden;
 }
 
-/* dot-grid texture */
 .hero-wrap::before {
     content: '';
     position: absolute;
@@ -171,35 +227,35 @@ div[data-testid="stSidebar"] .stButton > button:hover {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    min-height: 72px;
-    padding: 10px 0;
+    min-height: 76px;
+    padding: 12px 0;
     gap: 20px;
 }
 
 .hero-brand {
     display: flex;
     align-items: center;
-    gap: 16px;
+    gap: 18px;
 }
 
 .hero-icon {
-    font-size: 2.4rem;
+    font-size: 2.6rem;
     line-height: 1;
-    filter: drop-shadow(0 2px 6px rgba(0,0,0,0.45));
+    filter: drop-shadow(0 2px 8px rgba(0,0,0,0.5));
 }
 
 .hero-title {
     font-family: 'Sora', sans-serif;
-    font-size: 1.35rem;
+    font-size: 1.45rem;
     font-weight: 800;
     color: #f8fafc;
-    margin: 0 0 3px 0;
+    margin: 0 0 4px 0;
     letter-spacing: -0.02em;
     line-height: 1.15;
 }
 
 .hero-sub {
-    font-size: 0.82rem;
+    font-size: 0.85rem;
     color: #94a3b8;
     margin: 0;
     font-weight: 400;
@@ -209,16 +265,14 @@ div[data-testid="stSidebar"] .stButton > button:hover {
 .hero-stats {
     display: flex;
     align-items: center;
-    gap: 22px;
+    gap: 24px;
 }
 
-.hstat {
-    text-align: center;
-}
+.hstat { text-align: center; }
 
 .hstat-num {
     font-family: 'Sora', sans-serif;
-    font-size: 1.25rem;
+    font-size: 1.35rem;
     font-weight: 800;
     color: #f1f5f9;
     display: block;
@@ -226,32 +280,32 @@ div[data-testid="stSidebar"] .stButton > button:hover {
 }
 
 .hstat-lbl {
-    font-size: 0.66rem;
+    font-size: 0.68rem;
     color: #64748b;
     text-transform: uppercase;
     letter-spacing: 0.1em;
     display: block;
-    margin-top: 3px;
+    margin-top: 4px;
     font-weight: 600;
 }
 
-.hstat-divider {
+.hstat-div {
     width: 1px;
-    height: 36px;
+    height: 38px;
     background: rgba(100,116,139,0.35);
 }
 
-/* ══════════════════════════════════════
+/* ══════════════════════════════════════════
    SECTION LABELS
-══════════════════════════════════════ */
+══════════════════════════════════════════ */
 .sec-label {
     font-family: 'Sora', sans-serif;
-    font-size: 0.78rem;
+    font-size: 0.82rem;
     font-weight: 700;
     color: #475569;
     text-transform: uppercase;
     letter-spacing: 0.1em;
-    margin: 0 0 8px 0;
+    margin: 0 0 10px 0;
     display: flex;
     align-items: center;
     gap: 6px;
@@ -262,44 +316,42 @@ div[data-testid="stSidebar"] .stButton > button:hover {
     flex: 1;
     height: 1px;
     background: #e2e8f0;
-    margin-left: 6px;
+    margin-left: 8px;
 }
 
-/* ══════════════════════════════════════
-   PATIENT SUMMARY CARD
-══════════════════════════════════════ */
+/* ══════════════════════════════════════════
+   SUMMARY CARD
+══════════════════════════════════════════ */
 .summary-card {
     background: white;
     border-radius: 14px;
-    padding: 14px 18px;
-    box-shadow: 0 1px 10px rgba(0,0,0,0.08);
-    border: 1px solid #f1f5f9;
+    padding: 16px 18px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    border: 1px solid #e2e8f0;
 }
 
-/* dataframe text sizes */
-[data-testid="stDataFrame"] * {
-    font-size: 0.9rem !important;
-}
-
+/* Bigger dataframe text */
+[data-testid="stDataFrame"] * { font-size: 0.92rem !important; }
 [data-testid="stDataFrame"] th {
-    font-size: 0.82rem !important;
+    font-size: 0.84rem !important;
     font-weight: 700 !important;
     background: #f8fafc !important;
     color: #334155 !important;
     text-transform: uppercase;
     letter-spacing: 0.04em;
+    padding: 8px 12px !important;
 }
-
 [data-testid="stDataFrame"] td {
     color: #334155 !important;
+    padding: 7px 12px !important;
 }
 
-/* ══════════════════════════════════════
+/* ══════════════════════════════════════════
    RESULT CARDS
-══════════════════════════════════════ */
+══════════════════════════════════════════ */
 .result-card {
     border-radius: 14px;
-    padding: 20px 22px;
+    padding: 22px 24px;
     text-align: center;
     position: relative;
     overflow: hidden;
@@ -307,12 +359,12 @@ div[data-testid="stSidebar"] .stButton > button:hover {
 
 .result-alive {
     background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
-    box-shadow: 0 6px 24px rgba(22,163,74,0.35);
+    box-shadow: 0 6px 28px rgba(22,163,74,0.38);
 }
 
 .result-dead {
     background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
-    box-shadow: 0 6px 24px rgba(220,38,38,0.35);
+    box-shadow: 0 6px 28px rgba(220,38,38,0.38);
 }
 
 .rc-badge {
@@ -320,103 +372,94 @@ div[data-testid="stSidebar"] .stButton > button:hover {
     background: rgba(255,255,255,0.18);
     border: 1px solid rgba(255,255,255,0.3);
     border-radius: 20px;
-    padding: 3px 12px;
-    font-size: 0.75rem;
+    padding: 4px 14px;
+    font-size: 0.78rem;
     font-weight: 700;
     color: white;
     text-transform: uppercase;
     letter-spacing: 0.07em;
-    margin-bottom: 10px;
+    margin-bottom: 12px;
 }
 
 .rc-icon {
-    font-size: 2rem;
+    font-size: 2.2rem;
     display: block;
-    margin-bottom: 6px;
+    margin-bottom: 8px;
     line-height: 1;
 }
 
 .rc-verdict {
     font-family: 'Sora', sans-serif;
-    font-size: 1.5rem;
+    font-size: 1.6rem;
     font-weight: 800;
     color: white;
     display: block;
     line-height: 1.1;
-    margin-bottom: 5px;
+    margin-bottom: 6px;
 }
 
 .rc-sub {
-    font-size: 0.82rem;
+    font-size: 0.85rem;
     color: rgba(255,255,255,0.82);
     display: block;
 }
 
-/* confidence row */
 .conf-row {
     background: white;
     border-radius: 12px;
-    padding: 14px 18px;
-    margin-top: 10px;
-    box-shadow: 0 1px 8px rgba(0,0,0,0.07);
-    border: 1px solid #f1f5f9;
+    padding: 14px 20px;
+    margin-top: 12px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+    border: 1px solid #e2e8f0;
     display: flex;
     align-items: center;
     justify-content: space-between;
 }
 
 .conf-label {
-    font-size: 0.76rem;
+    font-size: 0.78rem;
     color: #94a3b8;
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.07em;
-    margin-bottom: 2px;
+    margin-bottom: 3px;
 }
 
 .conf-value {
     font-family: 'Sora', sans-serif;
-    font-size: 1.2rem;
+    font-size: 1.25rem;
     font-weight: 800;
     color: #0f172a;
 }
 
-.conf-alive {
-    font-size: 0.95rem;
-    font-weight: 700;
-    color: #16a34a;
-}
+.conf-alive { font-size: 1rem; font-weight: 700; color: #16a34a; }
+.conf-dead  { font-size: 1rem; font-weight: 700; color: #dc2626; }
 
-.conf-dead {
-    font-size: 0.95rem;
-    font-weight: 700;
-    color: #dc2626;
-}
-
-/* ══════════════════════════════════════
+/* ══════════════════════════════════════════
    CHART CARDS
-══════════════════════════════════════ */
+══════════════════════════════════════════ */
 .chart-card {
     background: white;
     border-radius: 14px;
-    padding: 14px 16px 10px 16px;
-    box-shadow: 0 1px 10px rgba(0,0,0,0.08);
-    border: 1px solid #f1f5f9;
+    padding: 16px 18px 12px 18px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    border: 1px solid #e2e8f0;
 }
 
-/* info box */
+/* Alert */
 .stAlert {
     border-radius: 10px !important;
     border-left: 4px solid #16a34a !important;
     background: #f0fdf4 !important;
-    font-size: 0.9rem !important;
+    font-size: 0.92rem !important;
 }
 
-/* caption */
-.stCaption, [data-testid="stCaptionContainer"] {
-    font-size: 0.8rem !important;
+/* Caption */
+[data-testid="stCaptionContainer"] p,
+.stCaption {
+    font-size: 0.82rem !important;
     color: #94a3b8 !important;
-    margin-top: 6px !important;
+    margin-top: 8px !important;
 }
 
 </style>
@@ -447,26 +490,24 @@ SCALED_MODELS = {"Logistic Regression", "KNN", "SVM", "Naive Bayes"}
 # SIDEBAR
 # ══════════════════════════════
 with st.sidebar:
-    # Branded sidebar header
     st.markdown("""
     <div style="
         background: linear-gradient(135deg,#16a34a,#dc2626);
-        padding: 16px 20px 14px;
+        padding: 18px 20px 16px;
         margin: -1px -1px 0;
         border-bottom: 1px solid #374151;
     ">
-        <div style="font-family:'Sora',sans-serif;font-size:1.05rem;font-weight:800;
-                    color:white;letter-spacing:-0.01em;margin-bottom:3px;">
+        <div style="font-family:'Sora',sans-serif;font-size:1.1rem;font-weight:800;
+                    color:white;letter-spacing:-0.01em;margin-bottom:4px;">
             🎗️ BC Predictor
         </div>
-        <div style="font-size:0.75rem;color:rgba(255,255,255,0.72);">
+        <div style="font-size:0.78rem;color:rgba(255,255,255,0.72);">
             Survival Analysis Dashboard
         </div>
     </div>
     """, unsafe_allow_html=True)
 
-    st.markdown("<div style='height:12px'></div>", unsafe_allow_html=True)
-
+    st.markdown("<div style='height:14px'></div>", unsafe_allow_html=True)
     st.markdown("### 🤖 Model Selection")
     selected_model = st.selectbox("Algorithm", MODEL_NAMES, label_visibility="collapsed")
 
@@ -485,13 +526,13 @@ with st.sidebar:
     predict_btn = st.button("⚡  RUN PREDICTION", use_container_width=True)
 
     st.markdown("""
-    <div style="margin-top:14px;padding:12px 16px;background:#1f2937;
+    <div style="margin-top:16px;padding:14px 16px;background:#1f2937;
                 border-radius:10px;border:1px solid #374151;">
-        <div style="font-size:0.72rem;color:#6b7280;text-transform:uppercase;
-                    letter-spacing:0.09em;font-weight:700;margin-bottom:6px;">
+        <div style="font-size:0.74rem;color:#6b7280;text-transform:uppercase;
+                    letter-spacing:0.09em;font-weight:700;margin-bottom:8px;">
             System Info
         </div>
-        <div style="font-size:0.82rem;color:#9ca3af;line-height:1.7;">
+        <div style="font-size:0.85rem;color:#9ca3af;line-height:1.8;">
             8 algorithms available<br>
             Binary classification<br>
             Real-time inference
@@ -501,7 +542,7 @@ with st.sidebar:
 
 
 # ══════════════════════════════
-# HERO HEADER  (full-width via negative-margin escape)
+# HERO HEADER
 # ══════════════════════════════
 st.markdown(f"""
 <div class="hero-wrap">
@@ -521,18 +562,18 @@ st.markdown(f"""
         <span class="hstat-num">8</span>
         <span class="hstat-lbl">Models</span>
       </div>
-      <div class="hstat-divider"></div>
+      <div class="hstat-div"></div>
       <div class="hstat">
         <span class="hstat-num">{len(features)}</span>
         <span class="hstat-lbl">Features</span>
       </div>
-      <div class="hstat-divider"></div>
+      <div class="hstat-div"></div>
       <div class="hstat">
         <span class="hstat-num">Binary</span>
         <span class="hstat-lbl">Output</span>
       </div>
-      <div class="hstat-divider"></div>
-      <div style="font-size:2.5rem;opacity:0.65;">🏥</div>
+      <div class="hstat-div"></div>
+      <div style="font-size:2.6rem;opacity:0.65;line-height:1;">🏥</div>
     </div>
   </div>
 </div>
@@ -565,7 +606,7 @@ def get_input_for_model(model_name):
 # ══════════════════════════════
 # CHARTS
 # ══════════════════════════════
-CHART_SIZE = (5.4, 2.6)
+CHART_SIZE = (5.6, 2.8)
 
 def chart_confidence(alive_p, dead_p, model_name):
     fig, ax = plt.subplots(figsize=CHART_SIZE)
@@ -577,24 +618,22 @@ def chart_confidence(alive_p, dead_p, model_name):
     colors = ["#dc2626", "#16a34a"]
 
     bars = ax.barh(labels, vals, color=colors, height=0.44, edgecolor="none")
-
     for bar, val in zip(bars, vals):
         ax.text(val + 1.2, bar.get_y() + bar.get_height() / 2,
-                f"{val:.1f}%", va="center", fontsize=10,
+                f"{val:.1f}%", va="center", fontsize=11,
                 fontweight="bold", color="#1e293b")
 
     ax.set_xlim(0, 122)
-    ax.set_xlabel("Probability (%)", fontsize=9, color="#94a3b8")
+    ax.set_xlabel("Probability (%)", fontsize=10, color="#94a3b8")
     ax.set_title(f"Prediction Confidence — {model_name}",
-                 fontsize=10, color="#334155", fontweight="bold", pad=8)
-    ax.tick_params(labelsize=9, colors="#64748b")
+                 fontsize=11, color="#334155", fontweight="bold", pad=8)
+    ax.tick_params(labelsize=10, colors="#64748b")
     ax.set_ylim(-1.0, 2.0)
-
     for spine in ax.spines.values():
         spine.set_visible(False)
     ax.xaxis.grid(True, color="#f1f5f9", linewidth=0.9)
     ax.set_axisbelow(True)
-    plt.tight_layout(pad=0.5)
+    plt.tight_layout(pad=0.6)
     return fig
 
 
@@ -619,7 +658,6 @@ def chart_model_comparison():
 
     x = np.arange(len(df))
     w = 0.33
-
     ax.bar(x - w/2, df["Alive %"], width=w, color="#16a34a",
            label="Alive", edgecolor="none", alpha=0.9)
     ax.bar(x + w/2, df["Dead %"],  width=w, color="#dc2626",
@@ -627,23 +665,22 @@ def chart_model_comparison():
 
     idx = MODEL_NAMES.index(selected_model)
     ax.axvspan(idx - 0.5, idx + 0.5, color="#f0fdf4", alpha=0.85, zorder=0)
-    ax.annotate("▲ selected", xy=(idx, 104), ha="center",
-                fontsize=7.5, color="#16a34a", fontweight="700")
+    ax.annotate("▲ selected", xy=(idx, 106), ha="center",
+                fontsize=8, color="#16a34a", fontweight="700")
 
     short = [n.replace(" ", "\n") for n in df["Model"]]
     ax.set_xticks(x)
-    ax.set_xticklabels(short, fontsize=8, color="#64748b", ha="center")
-    ax.set_ylabel("Probability (%)", fontsize=9, color="#94a3b8")
+    ax.set_xticklabels(short, fontsize=8.5, color="#64748b", ha="center")
+    ax.set_ylabel("Probability (%)", fontsize=10, color="#94a3b8")
     ax.set_title("All Models Comparison",
-                 fontsize=10, color="#334155", fontweight="bold", pad=8)
-    ax.set_ylim(0, 120)
-    ax.legend(fontsize=9, framealpha=0, loc="upper right")
-
+                 fontsize=11, color="#334155", fontweight="bold", pad=8)
+    ax.set_ylim(0, 122)
+    ax.legend(fontsize=9.5, framealpha=0, loc="upper right")
     for spine in ax.spines.values():
         spine.set_visible(False)
     ax.yaxis.grid(True, color="#f1f5f9", linewidth=0.9)
     ax.set_axisbelow(True)
-    ax.tick_params(axis="y", labelsize=9, colors="#94a3b8")
+    ax.tick_params(axis="y", labelsize=10, colors="#94a3b8")
     plt.tight_layout(pad=0.5)
     return fig
 
@@ -653,7 +690,6 @@ def chart_model_comparison():
 # ══════════════════════════════
 col_left, col_right = st.columns([1.5, 1], gap="large")
 
-# ── Patient Summary ──
 with col_left:
     st.markdown('<p class="sec-label">📋 Patient Summary</p>', unsafe_allow_html=True)
     node_ratio = reginol_node_pos / max(regional_node_exam, 1)
@@ -668,11 +704,10 @@ with col_left:
     })
 
     st.markdown('<div class="summary-card">', unsafe_allow_html=True)
-    st.dataframe(summary, width="stretch", hide_index=True, height=260)
+    st.dataframe(summary, width="stretch", hide_index=True, height=268)
     st.markdown('</div>', unsafe_allow_html=True)
     st.caption(f"Active model: **{selected_model}**  ·  Features used: {len(features)}")
 
-# ── Prediction Result ──
 with col_right:
     st.markdown('<p class="sec-label">🤖 Prediction Result</p>', unsafe_allow_html=True)
 
@@ -730,9 +765,6 @@ with col_right:
         alive_p, dead_p = 50.0, 50.0
 
 
-# ══════════════════════════════
-# CHARTS ROW
-# ══════════════════════════════
 if predict_btn:
     st.markdown("<div style='height:10px'></div>", unsafe_allow_html=True)
     c1, c2 = st.columns(2, gap="large")
