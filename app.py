@@ -152,7 +152,7 @@ section[data-testid="stSidebar"] { display: none !important; }
 """, unsafe_allow_html=True)
 
 # ── LOAD PKL ──
-PKL_PATH = "breast_cancer_s.pkl"
+PKL_PATH = "breast_cancer_models.pkl"
 
 @st.cache_resource
 def load_bundle(path):
