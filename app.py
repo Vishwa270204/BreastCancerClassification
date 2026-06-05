@@ -51,20 +51,28 @@ div[data-testid="stSidebar"] * {
     margin: 0;
 }
 
-.result-alive,
-.result-dead {
-    background: linear-gradient(135deg, #1e40af, #2563eb);
+.result-alive {
+    background: linear-gradient(135deg, #15803d, #16a34a);
     border-radius: 14px;
-    padding: 24px 32px;
+    padding: 16px 20px;
     color: white;
     text-align: center;
-    box-shadow: 0 6px 24px rgba(37,99,235,0.25);
+    box-shadow: 0 6px 24px rgba(22,163,74,0.25);
+}
+
+.result-dead {
+    background: linear-gradient(135deg, #b91c1c, #dc2626);
+    border-radius: 14px;
+    padding: 16px 20px;
+    color: white;
+    text-align: center;
+    box-shadow: 0 6px 24px rgba(220,38,38,0.25);
 }
 
 .result-alive h2,
 .result-dead h2 {
-    font-size: 1.8rem;
-    margin: 0 0 8px 0;
+    font-size: 1.3rem;
+    margin: 0 0 4px 0;
     color: white;
 }
 
