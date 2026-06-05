@@ -11,53 +11,95 @@ st.set_page_config(page_title="Breast Cancer Survival Predictor", page_icon="�
 st.markdown("""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500;600&display=swap');
-html, body, [class*="css"] { font-family: 'DM Sans', sans-serif; }
-h1, h2, h3 { font-family: 'DM Serif Display', serif; }
-.stApp { background: linear-gradient(135deg, #fdf6f0 0%, #fce8e8 100%); }
-div[data-testid="stSidebar"] { background: #1a0a0a; }
-div[data-testid="stSidebar"] * { color: white !important; }
+
+html, body, [class*="css"] {
+    font-family: 'DM Sans', sans-serif;
+}
+
+h1, h2, h3 {
+    font-family: 'DM Serif Display', serif;
+}
+
+.stApp {
+    background: linear-gradient(135deg, #eef6ff 0%, #dbeafe 100%);
+}
+
+div[data-testid="stSidebar"] {
+    background: #0f172a;
+}
+
+div[data-testid="stSidebar"] * {
+    color: white !important;
+}
+
 .header-card {
-    background: linear-gradient(135deg, #8b1a1a, #c0392b);
-    border-radius: 16px; padding: 32px 40px; color: white;
-    margin-bottom: 28px; box-shadow: 0 8px 32px rgba(139,26,26,0.3);
+    background: linear-gradient(135deg, #1e40af, #2563eb);
+    border-radius: 16px;
+    padding: 22px 30px;
+    color: white;
+    margin-bottom: 20px;
+    box-shadow: 0 8px 32px rgba(37,99,235,0.25);
 }
-.header-card h1 { font-size: 2.2rem; margin: 0 0 8px 0; color: white; }
-.header-card p  { font-size: 1rem; opacity: 0.85; margin: 0; }
-.result-alive {
-    background: linear-gradient(135deg, #1a5c2a, #27ae60);
-    border-radius: 14px; padding: 28px 36px; color: white;
-    text-align: center; box-shadow: 0 6px 24px rgba(39,174,96,0.3);
+
+.header-card h1 {
+    font-size: 1.7rem;
+    margin: 0 0 6px 0;
+    color: white;
 }
+
+.header-card p {
+    font-size: 0.95rem;
+    opacity: 0.9;
+    margin: 0;
+}
+
+.result-alive,
 .result-dead {
-    background: linear-gradient(135deg, #8b1a1a, #c0392b);
-    border-radius: 14px; padding: 28px 36px; color: white;
-    text-align: center; box-shadow: 0 6px 24px rgba(192,57,43,0.3);
+    background: linear-gradient(135deg, #1e40af, #2563eb);
+    border-radius: 14px;
+    padding: 24px 32px;
+    color: white;
+    text-align: center;
+    box-shadow: 0 6px 24px rgba(37,99,235,0.25);
 }
-.result-alive h2, .result-dead h2 { font-size: 2rem; margin: 0 0 8px 0; color: white; }
-.result-alive p,  .result-dead p  { font-size: 1.05rem; opacity: 0.9; margin: 0; }
+
+.result-alive h2,
+.result-dead h2 {
+    font-size: 1.8rem;
+    margin: 0 0 8px 0;
+    color: white;
+}
+
 .prob-card {
-    background: white; border-radius: 12px; padding: 18px 24px;
-    margin-top: 14px; box-shadow: 0 2px 12px rgba(0,0,0,0.08);
-    text-align: center; font-size: 1rem; color: #333;
+    background: white;
+    border-radius: 12px;
+    padding: 18px 24px;
+    margin-top: 14px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    text-align: center;
 }
+
 .model-badge {
-    display: inline-block; background: #8b1a1a; color: white;
-    border-radius: 20px; padding: 4px 14px; font-size: 0.82rem;
-    font-weight: 600; margin-bottom: 12px;
+    display: inline-block;
+    background: #1e40af;
+    color: white;
+    border-radius: 20px;
+    padding: 4px 14px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    margin-bottom: 12px;
 }
-.info-box {
-    background: white; border-left: 4px solid #c0392b;
-    border-radius: 8px; padding: 14px 18px; margin-top: 12px;
-    font-size: 0.88rem; color: #333; box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-}
+
 .section-title {
-    font-family: 'DM Serif Display', serif; font-size: 1.2rem;
-    color: #8b1a1a; margin: 20px 0 10px 0;
-    border-bottom: 1px solid #f0d0d0; padding-bottom: 6px;
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.15rem;
+    color: #1e40af;
+    margin: 20px 0 10px 0;
+    border-bottom: 1px solid #bfdbfe;
+    padding-bottom: 6px;
 }
 </style>
 """, unsafe_allow_html=True)
-
 # ── LOAD PKL ──
 PKL_PATH = "breast_cancer_models.pkl"
 
@@ -125,23 +167,39 @@ def get_input_for_model(model_name):
 
 # ── CHART 1: Confidence Bar (Alive vs Dead) ──
 def chart_confidence(alive_p, dead_p, model_name):
-    fig, ax = plt.subplots(figsize=(5, 2.5))
-    fig.patch.set_facecolor("#fdf6f0")
-    ax.set_facecolor("#fdf6f0")
-    bars = ax.barh(["Dead", "Alive"], [dead_p, alive_p],
-                   color=["#c0392b", "#27ae60"], height=0.5, edgecolor="none")
+    fig, ax = plt.subplots(figsize=(8, 3))
+
+    fig.patch.set_facecolor("#eef6ff")
+    ax.set_facecolor("#eef6ff")
+
+    bars = ax.barh(
+        ["Dead", "Alive"],
+        [dead_p, alive_p],
+        color=["#93c5fd", "#2563eb"]
+    )
+
     for bar, val in zip(bars, [dead_p, alive_p]):
-        ax.text(val + 1, bar.get_y() + bar.get_height() / 2,
-                f"{val:.1f}%", va="center", fontsize=11, fontweight="bold", color="#333")
+        ax.text(
+            val + 1,
+            bar.get_y() + bar.get_height()/2,
+            f"{val:.1f}%",
+            va="center",
+            fontweight="bold"
+        )
+
     ax.set_xlim(0, 115)
-    ax.set_xlabel("Probability (%)", fontsize=9, color="#555")
-    ax.set_title(f"Prediction Confidence — {model_name}", fontsize=10, color="#8b1a1a", fontweight="bold")
-    ax.tick_params(colors="#555")
+    ax.set_xlabel("Probability (%)")
+    ax.set_title(
+        f"Prediction Confidence — {model_name}",
+        color="#1e40af",
+        fontweight="bold"
+    )
+
     for spine in ax.spines.values():
         spine.set_visible(False)
+
     plt.tight_layout()
     return fig
-
 # ── CHART 2: All Models Comparison ──
 def chart_model_comparison():
     results = []
@@ -236,16 +294,24 @@ with col2:
                 <span style="color:#27ae60">Alive: {alive_p:.1f}%</span> &nbsp;|&nbsp;
                 <span style="color:#c0392b">Dead: {dead_p:.1f}%</span>
             </div>""", unsafe_allow_html=True)
-
-        
-       
-        # ── CHART 1: Confidence ──
-        st.markdown('<div class="section-title">📊 Prediction Confidence</div>', unsafe_allow_html=True)
-        st.pyplot(chart_confidence(alive_p, dead_p, selected_model))
-
-        # ── CHART 2: All Models ──
-        st.markdown('<div class="section-title">📊 All Models Comparison</div>', unsafe_allow_html=True)
-        st.pyplot(chart_model_comparison())
-
     else:
         st.info("👈 Fill in patient details in the sidebar and click **Predict**.")
+# =========================
+# CHARTS BELOW SUMMARY
+# =========================
+
+if predict_btn:
+
+    st.markdown("---")
+
+    st.markdown(
+        '<div class="section-title">📊 Prediction Confidence</div>',
+        unsafe_allow_html=True
+    )
+    st.pyplot(chart_confidence(alive_p, dead_p, selected_model))
+
+    st.markdown(
+        '<div class="section-title">📊 All Models Comparison</div>',
+        unsafe_allow_html=True
+    )
+    st.pyplot(chart_model_comparison())
