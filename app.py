@@ -123,7 +123,7 @@ section[data-testid="stSidebar"] { display: none !important; }
     font-size: 1.6rem; margin: 0 0 6px 0; color: white;
 }
 .result-alive p, .result-dead p { font-size: 0.86rem; opacity: 0.88; margin: 0; }
-.model-badge {
+.-badge {
     display: inline-block;
     background: rgba(255,255,255,0.18);
     border: 1px solid rgba(255,255,255,0.3);
@@ -152,7 +152,7 @@ section[data-testid="stSidebar"] { display: none !important; }
 """, unsafe_allow_html=True)
 
 # ── LOAD PKL ──
-PKL_PATH = "breast_cancer_models.pkl"
+PKL_PATH = "breast_cancer_s.pkl"
 
 @st.cache_resource
 def load_bundle(path):
@@ -167,9 +167,9 @@ scaler        = bundle["scaler"]
 features      = bundle["features"]
 label_encoder = bundle["label_encoder"]
 
-MODEL_NAMES   = ["Logistic Regression", "KNN", "Random Forest", "Decision Tree",
+_NAMES   = ["Logistic Regression", "KNN", "Random Forest", "Decision Tree",
                  "SVM", "Gradient Boosting", "Naive Bayes", "XGBoost"]
-SCALED_MODELS = {"Logistic Regression", "KNN", "SVM", "Naive Bayes"}
+SCALED_S = {"Logistic Regression", "KNN", "SVM", "Naive Bayes"}
 
 # ── HEADER ──
 st.markdown("""
@@ -179,12 +179,18 @@ st.markdown("""
         <h1>Breast Cancer Survival Predictor</h1>
     </div>
     """, unsafe_allow_html=True)
+/* ── Input strip: target the container by its data-testid key ── */
+[data-testid="stVerticalBlock"]:has(> [data-testid="stVerticalBlockBorderWrapper"] > div > [data-testid="stHorizontalBlock"] > div:nth-child(9) button) {
+    background: #1c0608;
+    padding: 14px 20px 18px 20px;
+    margin-bottom: 0;
+}
 
 # ── INPUT ZONE — open wrapper div, render columns, close div ──
 st.markdown('<div class="input-zone">', unsafe_allow_html=True)
 
 c1,c2,c3,c4,c5,c6,c7,c8,c9 = st.columns([1.6,1.1,1.1,1,1,1,1,1,0.9])
-with c1: selected_model     = st.selectbox("🤖 Model", MODEL_NAMES)
+with c1: selected_model     = st.selectbox("Model", MODEL_NAMES)
 with c2: survival_months    = st.number_input("Survival Months",     step=1)
 with c3: tumor_size         = st.number_input("Tumor Size (mm)",    step=1)
 with c4: reginol_node_pos   = st.number_input("Node Positive",     step=1)
@@ -332,11 +338,11 @@ if predict_btn:
     ch1, ch2 = st.columns(2, gap="large")
     with ch1:
         st.markdown('<div class="chart-wrap">', unsafe_allow_html=True)
-        st.pyplot(chart_confidence(alive_p, dead_p, selected_model), use_container_width=True)
+        st.pyplot(chart_confidence(alive_p, dead_p, selected_), use_container_width=True)
         st.markdown('</div>', unsafe_allow_html=True)
     with ch2:
         st.markdown('<div class="chart-wrap">', unsafe_allow_html=True)
-        st.pyplot(chart_model_comparison(), use_container_width=True)
+        st.pyplot(chart__comparison(), use_container_width=True)
         st.markdown('</div>', unsafe_allow_html=True)
 
 st.markdown('</div>', unsafe_allow_html=True)
