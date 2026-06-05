@@ -169,7 +169,7 @@ label_encoder = bundle["label_encoder"]
 
 MODEL_NAMES   = ["Logistic Regression", "KNN", "Random Forest", "Decision Tree",
                  "SVM", "Gradient Boosting", "Naive Bayes", "XGBoost"]
-SCALED_S = {"Logistic Regression", "KNN", "SVM", "Naive Bayes"}
+SCALED_MODELS = {"Logistic Regression", "KNN", "SVM", "Naive Bayes"}
 
 # ── HEADER ──
 st.markdown("""
