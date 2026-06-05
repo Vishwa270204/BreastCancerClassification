@@ -3,6 +3,8 @@ import pandas as pd
 import numpy as np
 import joblib
 import os
+import matplotlib.pyplot as plt
+import matplotlib.patches as mpatches
 
 st.set_page_config(page_title="Breast Cancer Survival Predictor", page_icon="🎗️", layout="wide")
 
@@ -69,7 +71,7 @@ if not os.path.exists(PKL_PATH):
 
 bundle        = load_bundle(PKL_PATH)
 scaler        = bundle["scaler"]
-features      = bundle["features"]   # actual list saved in pkl
+features      = bundle["features"]
 label_encoder = bundle["label_encoder"]
 
 MODEL_NAMES   = ["Logistic Regression", "KNN", "Random Forest", "Decision Tree",
@@ -91,32 +93,96 @@ with st.sidebar:
     st.markdown("---")
     st.markdown("## 🧬 Patient Details")
 
-    survival_months     = st.number_input("Survival Months", min_value=1, max_value=120, value=40, step=1)
-    tumor_size          = st.number_input("Tumor Size (mm)", min_value=1, max_value=200, value=25, step=1)
-    reginol_node_pos    = st.number_input("Reginol Node Positive", min_value=0, max_value=50, value=2, step=1)
-    regional_node_exam  = st.number_input("Regional Node Examined", min_value=1, max_value=60, value=10, step=1)
-    estrogen            = st.selectbox("Estrogen Status",     ["Positive", "Negative"])
-    progesterone        = st.selectbox("Progesterone Status", ["Positive", "Negative"])
-    a_stage             = st.selectbox("A Stage",             ["Regional", "Distant"])
+    survival_months    = st.number_input("Survival Months", min_value=1, max_value=120, value=40, step=1)
+    tumor_size         = st.number_input("Tumor Size (mm)", min_value=1, max_value=200, value=25, step=1)
+    reginol_node_pos   = st.number_input("Reginol Node Positive", min_value=0, max_value=50, value=2, step=1)
+    regional_node_exam = st.number_input("Regional Node Examined", min_value=1, max_value=60, value=10, step=1)
+    estrogen           = st.selectbox("Estrogen Status",     ["Positive", "Negative"])
+    progesterone       = st.selectbox("Progesterone Status", ["Positive", "Negative"])
+    a_stage            = st.selectbox("A Stage",             ["Regional", "Distant"])
 
     predict_btn = st.button("🔍 Predict", use_container_width=True)
 
-# ── FEATURE VECTOR — dynamically maps to whatever features are in pkl ──
+# ── FEATURE VECTOR ──
 def build_input():
     node_ratio = reginol_node_pos / max(regional_node_exam, 1)
     mapping = {
-        "Survival Months":      survival_months,
-        "Tumor Size":           tumor_size,
-        "Reginol Node Positive": reginol_node_pos,
+        "Survival Months":        survival_months,
+        "Tumor Size":             tumor_size,
+        "Reginol Node Positive":  reginol_node_pos,
         "Regional Node Examined": regional_node_exam,
-        "Node_Positive_Ratio":  node_ratio,
-        "Estrogen Status":      0 if estrogen == "Positive" else 1,
-        "Progesterone Status":  0 if progesterone == "Positive" else 1,
-        "A Stage":              0 if a_stage == "Regional" else 1,
+        "Node_Positive_Ratio":    node_ratio,
+        "Estrogen Status":        0 if estrogen == "Positive" else 1,
+        "Progesterone Status":    0 if progesterone == "Positive" else 1,
+        "A Stage":                0 if a_stage == "Regional" else 1,
     }
-    # Only pick the features that are actually in the pkl
     row = {f: mapping[f] for f in features}
     return pd.DataFrame([row])[features]
+
+def get_input_for_model(model_name):
+    X = build_input()
+    return scaler.transform(X) if model_name in SCALED_MODELS else X.values
+
+# ── CHART 1: Confidence Bar (Alive vs Dead) ──
+def chart_confidence(alive_p, dead_p, model_name):
+    fig, ax = plt.subplots(figsize=(5, 2.5))
+    fig.patch.set_facecolor("#fdf6f0")
+    ax.set_facecolor("#fdf6f0")
+    bars = ax.barh(["Dead", "Alive"], [dead_p, alive_p],
+                   color=["#c0392b", "#27ae60"], height=0.5, edgecolor="none")
+    for bar, val in zip(bars, [dead_p, alive_p]):
+        ax.text(val + 1, bar.get_y() + bar.get_height() / 2,
+                f"{val:.1f}%", va="center", fontsize=11, fontweight="bold", color="#333")
+    ax.set_xlim(0, 115)
+    ax.set_xlabel("Probability (%)", fontsize=9, color="#555")
+    ax.set_title(f"Prediction Confidence — {model_name}", fontsize=10, color="#8b1a1a", fontweight="bold")
+    ax.tick_params(colors="#555")
+    for spine in ax.spines.values():
+        spine.set_visible(False)
+    plt.tight_layout()
+    return fig
+
+# ── CHART 2: All Models Comparison ──
+def chart_model_comparison():
+    results = []
+    for name in MODEL_NAMES:
+        m = bundle[name]
+        Xi = get_input_for_model(name)
+        if hasattr(m, "predict_proba"):
+            p = m.predict_proba(Xi)[0]
+            results.append({"Model": name, "Alive %": p[0]*100, "Dead %": p[1]*100})
+        else:
+            pred = m.predict(Xi)[0]
+            results.append({"Model": name, "Alive %": 100 if pred == 0 else 0,
+                            "Dead %": 100 if pred == 1 else 0})
+
+    df = pd.DataFrame(results)
+    fig, ax = plt.subplots(figsize=(8, 4))
+    fig.patch.set_facecolor("#fdf6f0")
+    ax.set_facecolor("#fdf6f0")
+
+    x = np.arange(len(df))
+    w = 0.38
+    ax.bar(x - w/2, df["Alive %"], width=w, color="#27ae60", label="Alive", edgecolor="none")
+    ax.bar(x + w/2, df["Dead %"],  width=w, color="#c0392b", label="Dead",  edgecolor="none")
+
+    ax.set_xticks(x)
+    ax.set_xticklabels(df["Model"], rotation=30, ha="right", fontsize=8, color="#333")
+    ax.set_ylabel("Probability (%)", fontsize=9, color="#555")
+    ax.set_title("All Models — Alive vs Dead Probability", fontsize=11,
+                 color="#8b1a1a", fontweight="bold")
+    ax.set_ylim(0, 115)
+    ax.legend(fontsize=9)
+    ax.tick_params(colors="#555")
+    for spine in ax.spines.values():
+        spine.set_visible(False)
+
+    # highlight selected model
+    idx = MODEL_NAMES.index(selected_model)
+    ax.axvspan(idx - 0.5, idx + 0.5, color="#8b1a1a", alpha=0.07, zorder=0)
+
+    plt.tight_layout()
+    return fig
 
 # ── LAYOUT ──
 col1, col2 = st.columns([1.5, 1], gap="large")
@@ -159,18 +225,26 @@ with col2:
                 <p>The model predicts a higher risk of mortality.</p>
             </div>""", unsafe_allow_html=True)
 
+        alive_p, dead_p = 50.0, 50.0
         if hasattr(model, "predict_proba"):
-            proba      = model.predict_proba(X_input)[0]
-            confidence = proba[pred_encoded] * 100
-            alive_p    = proba[0] * 100
-            dead_p     = proba[1] * 100
+            proba       = model.predict_proba(X_input)[0]
+            confidence  = proba[pred_encoded] * 100
+            alive_p     = proba[0] * 100
+            dead_p      = proba[1] * 100
             st.markdown(f"""<div class="prob-card">
                 <strong>Confidence: {confidence:.1f}%</strong><br>
                 <span style="color:#27ae60">Alive: {alive_p:.1f}%</span> &nbsp;|&nbsp;
                 <span style="color:#c0392b">Dead: {dead_p:.1f}%</span>
             </div>""", unsafe_allow_html=True)
 
-        st.markdown("""<div class="info-box"
-        </div>""", unsafe_allow_html=True)
+        
+        # ── CHART 1: Confidence ──
+        st.markdown('<div class="section-title">📊 Prediction Confidence</div>', unsafe_allow_html=True)
+        st.pyplot(chart_confidence(alive_p, dead_p, selected_model))
+
+        # ── CHART 2: All Models ──
+        st.markdown('<div class="section-title">📊 All Models Comparison</div>', unsafe_allow_html=True)
+        st.pyplot(chart_model_comparison())
+
     else:
         st.info("👈 Fill in patient details in the sidebar and click **Predict**.")
