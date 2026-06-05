@@ -4,6 +4,9 @@ import numpy as np
 import joblib
 import os
 import matplotlib.pyplot as plt
+import matplotlib.patches as mpatches
+from matplotlib.patches import FancyArrowPatch
+import matplotlib.gridspec as gridspec
 
 st.set_page_config(
     page_title="Breast Cancer Survival Predictor",
@@ -17,12 +20,10 @@ st.markdown("""
 
 html, body, [class*="css"] { font-family: 'Outfit', sans-serif; }
 
-/* Hide Streamlit chrome */
 #MainMenu, footer, header { display: none !important; }
 section[data-testid="stSidebar"] { display: none !important; }
 [data-testid="collapsedControl"] { display: none !important; }
 
-/* App background */
 .stApp { background: #f5eded; }
 .block-container {
     padding-top: 0 !important;
@@ -45,51 +46,88 @@ section[data-testid="stSidebar"] { display: none !important; }
     font-size: 1.5rem; color: white; margin: 0;
 }
 .header-bar p { font-size: 0.77rem; color: rgba(255,255,255,0.72); margin: 0; }
-.hbar-divider { width:1px; height:40px; background:rgba(255,255,255,0.22); margin: 0 8px; }
 
-
-/* Simpler approach: use a landmark class on a container */
-.input-zone {
-    background: #1c0608 !important;
-    padding: 12px 36px 18px 36px !important;
-    margin-bottom: 24px !important;
+/* ── Input Zone ── */
+.input-zone-wrapper {
+    background: linear-gradient(135deg, #1a0305 0%, #2d0608 60%, #1a0305 100%);
+    border-bottom: 3px solid #7f1d1d;
+    padding: 0px 36px 16px 36px;
+    box-shadow: 0 6px 24px rgba(107,15,26,0.35);
+    position: relative;
 }
-/* Labels in input zone */
-.input-zone label { color: #f9c8c8 !important; font-size: 0.75rem !important; font-weight: 500 !important; }
-.input-zone p, .input-zone span, .input-zone div { color: #f0dada !important; }
-/* Text inputs */
-.input-zone input {
-    background-color: #2e0a0a !important;
-    border: 1px solid #5c2020 !important;
-    color: #f5e0e0 !important;
+.input-zone-wrapper::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, transparent, #ef4444, transparent);
+}
+.input-section-label {
+    font-family: 'Playfair Display', serif;
+    color: #fca5a5;
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 10px 0 6px 0;
+    border-bottom: 1px solid rgba(252,165,165,0.15);
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.input-zone-wrapper label {
+    color: #fca5a5 !important;
+    font-size: 0.72rem !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.04em !important;
+    text-transform: uppercase !important;
+}
+.input-zone-wrapper p,
+.input-zone-wrapper span,
+.input-zone-wrapper div { color: #f0dada !important; }
+.input-zone-wrapper input {
+    background-color: #3d0a0a !important;
+    border: 1px solid #7f1d1d !important;
+    color: #fef2f2 !important;
     border-radius: 6px !important;
 }
-/* Selectbox */
-.input-zone [data-baseweb="select"] > div {
-    background-color: #2e0a0a !important;
-    border: 1px solid #5c2020 !important;
-    color: #f5e0e0 !important;
+.input-zone-wrapper input:focus {
+    border-color: #ef4444 !important;
+    box-shadow: 0 0 0 2px rgba(239,68,68,0.25) !important;
+}
+.input-zone-wrapper [data-baseweb="select"] > div {
+    background-color: #3d0a0a !important;
+    border: 1px solid #7f1d1d !important;
+    color: #fef2f2 !important;
     border-radius: 6px !important;
 }
-.input-zone [data-baseweb="select"] svg { fill: #f0dada !important; }
-/* Stepper +/- */
-.input-zone button[data-testid="stNumberInputStepDown"],
-.input-zone button[data-testid="stNumberInputStepUp"] {
-    background: #3d1010 !important;
-    border-color: #5c2020 !important;
-    color: #f0dada !important;
+.input-zone-wrapper [data-baseweb="select"] svg { fill: #fca5a5 !important; }
+.input-zone-wrapper button[data-testid="stNumberInputStepDown"],
+.input-zone-wrapper button[data-testid="stNumberInputStepUp"] {
+    background: #4a1010 !important;
+    border-color: #7f1d1d !important;
+    color: #fca5a5 !important;
 }
-/* Predict button */
-.input-zone .stButton > button {
-    background: linear-gradient(135deg, #9b1414, #dc2626) !important;
+.input-zone-wrapper .stButton > button {
+    background: linear-gradient(135deg, #991b1b, #ef4444) !important;
     color: white !important; border: none !important;
-    border-radius: 8px !important; font-weight: 600 !important;
+    border-radius: 8px !important; font-weight: 700 !important;
     font-size: 0.9rem !important;
-    box-shadow: 0 4px 14px rgba(185,28,28,0.45) !important;
+    box-shadow: 0 4px 18px rgba(239,68,68,0.5) !important;
     width: 100% !important;
-    height: 42px !important;
+    height: 44px !important;
+    letter-spacing: 0.05em !important;
+    text-transform: uppercase !important;
+    transition: all 0.2s ease !important;
 }
-.input-zone .stButton > button:hover { opacity: 0.85 !important; }
+.input-zone-wrapper .stButton > button:hover {
+    transform: translateY(-1px) !important;
+    box-shadow: 0 6px 22px rgba(239,68,68,0.6) !important;
+}
+.row-divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(252,165,165,0.2), transparent);
+    margin: 4px 0 10px 0;
+}
 
 /* ── Main content ── */
 .main-zone {
@@ -110,20 +148,18 @@ section[data-testid="stSidebar"] { display: none !important; }
     background: linear-gradient(135deg, #14532d, #15803d);
     border-radius: 12px; padding: 22px 26px;
     color: white; text-align: center;
-   
 }
 .result-dead {
     background: linear-gradient(135deg, #6b0f1a, #b91c1c);
     border-radius: 12px; padding: 22px 26px;
     color: white; text-align: center;
-    
 }
 .result-alive h2, .result-dead h2 {
     font-family: 'Playfair Display', serif;
     font-size: 1.6rem; margin: 0 0 6px 0; color: white;
 }
 .result-alive p, .result-dead p { font-size: 0.86rem; opacity: 0.88; margin: 0; }
-.-badge {
+.model-badge {
     display: inline-block;
     background: rgba(255,255,255,0.18);
     border: 1px solid rgba(255,255,255,0.3);
@@ -138,15 +174,17 @@ section[data-testid="stSidebar"] { display: none !important; }
     box-shadow: 0 2px 10px rgba(0,0,0,0.07);
     text-align: center; font-size: 0.9rem; color: #333;
 }
-.info-box {
-    background: #fff5f5; border-left: 3px solid #b91c1c;
-    border-radius: 6px; padding: 10px 14px; margin-top: 10px;
-    font-size: 0.77rem; color: #666;
-}
 .chart-wrap {
     background: white; border-radius: 12px;
-    padding: 16px 12px 10px 12px;
+    padding: 12px 10px 8px 10px;
     box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    margin-bottom: 14px;
+}
+.chart-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-top: 16px;
 }
 </style>
 """, unsafe_allow_html=True)
@@ -177,26 +215,35 @@ st.markdown("""
     <span style="font-size:2rem">🎗️</span>
     <div>
         <h1>Breast Cancer Survival Predictor</h1>
+        <p>Clinical ML Dashboard — Multi-Model Analysis</p>
     </div>
 </div>
 """, unsafe_allow_html=True)
 
+# ── INPUT ZONE (2 rows) ──
+st.markdown('<div class="input-zone-wrapper">', unsafe_allow_html=True)
 
-# ── INPUT ZONE — open wrapper div, render columns, close div ──
-st.markdown('<div class="input-zone">', unsafe_allow_html=True)
+# Row label
+st.markdown('<div class="input-section-label">⚙️ Patient Input Parameters</div>', unsafe_allow_html=True)
 
-c1,c2,c3,c4,c5,c6,c7,c8,c9 = st.columns([1.6,1.1,1.1,1,1,1,1,1,0.9])
-with c1: selected_model     = st.selectbox("Model", MODEL_NAMES)
-with c2: survival_months    = st.number_input("Survival Months",     step=1)
-with c3: tumor_size         = st.number_input("Tumor Size (mm)",    step=1)
-with c4: reginol_node_pos   = st.number_input("Node Positive",     step=1)
-with c5: regional_node_exam = st.number_input("Node Examined",      step=1)
-with c6: estrogen           = st.selectbox("Estrogen",            ["Positive","Negative"])
-with c7: progesterone       = st.selectbox("Progesterone",        ["Positive","Negative"])
-with c8: a_stage            = st.selectbox("A Stage",             ["Regional","Distant"])
-with c9:
-    st.markdown("<div style='height:27px'></div>", unsafe_allow_html=True)
-    predict_btn = st.button("🔍 Predict", use_container_width=True)
+# ROW 1 — Numerical inputs
+r1c1, r1c2, r1c3, r1c4, r1c5 = st.columns([1.4, 1.2, 1.2, 1.2, 1.2])
+with r1c1: selected_model     = st.selectbox("Model", MODEL_NAMES)
+with r1c2: survival_months    = st.number_input("Survival Months", step=1, min_value=0)
+with r1c3: tumor_size         = st.number_input("Tumor Size (mm)", step=1, min_value=0)
+with r1c4: reginol_node_pos   = st.number_input("Node Positive",   step=1, min_value=0)
+with r1c5: regional_node_exam = st.number_input("Node Examined",   step=1, min_value=0)
+
+st.markdown('<div class="row-divider"></div>', unsafe_allow_html=True)
+
+# ROW 2 — Categorical inputs + predict
+r2c1, r2c2, r2c3, r2c4 = st.columns([1.2, 1.2, 1.2, 0.8])
+with r2c1: estrogen      = st.selectbox("Estrogen Status",    ["Positive", "Negative"])
+with r2c2: progesterone  = st.selectbox("Progesterone Status",["Positive", "Negative"])
+with r2c3: a_stage       = st.selectbox("A Stage",            ["Regional", "Distant"])
+with r2c4:
+    st.markdown("<div style='height:28px'></div>", unsafe_allow_html=True)
+    predict_btn = st.button("🔍 Run Prediction", use_container_width=True)
 
 st.markdown('</div>', unsafe_allow_html=True)
 
@@ -219,26 +266,28 @@ def get_input_for_model(name):
     X = build_input()
     return scaler.transform(X) if name in SCALED_MODELS else X.values
 
-CHART_SIZE = (5.2, 3.2)
+CHART_SIZE = (3.8, 2.6)
 
+# ─── Chart 1: Confidence bar (horizontal) ───
 def chart_confidence(alive_p, dead_p, model_name):
     fig, ax = plt.subplots(figsize=CHART_SIZE)
     fig.patch.set_facecolor("white")
     ax.set_facecolor("white")
-    bars = ax.barh(["Dead","Alive"], [dead_p, alive_p],
-                   color=["#b91c1c","#15803d"], height=0.44, edgecolor="none")
+    bars = ax.barh(["Dead", "Alive"], [dead_p, alive_p],
+                   color=["#b91c1c", "#15803d"], height=0.42, edgecolor="none")
     for bar, val in zip(bars, [dead_p, alive_p]):
-        ax.text(val+1.5, bar.get_y()+bar.get_height()/2,
-                f"{val:.1f}%", va="center", fontsize=11, fontweight="bold", color="#333")
-    ax.set_xlim(0,125)
-    ax.set_xlabel("Probability (%)", fontsize=8, color="#aaa")
-    ax.set_title(f"Prediction Confidence\n{model_name}", fontsize=9,
-                 color="#6b0f1a", fontweight="bold", pad=10)
-    ax.tick_params(colors="#777", labelsize=9)
+        ax.text(val + 1.5, bar.get_y() + bar.get_height() / 2,
+                f"{val:.1f}%", va="center", fontsize=9, fontweight="bold", color="#333")
+    ax.set_xlim(0, 125)
+    ax.set_xlabel("Probability (%)", fontsize=7, color="#aaa")
+    ax.set_title(f"Prediction Confidence\n{model_name}", fontsize=8,
+                 color="#6b0f1a", fontweight="bold", pad=8)
+    ax.tick_params(colors="#777", labelsize=8)
     for sp in ax.spines.values(): sp.set_visible(False)
-    plt.tight_layout(pad=1.0)
+    plt.tight_layout(pad=0.8)
     return fig
 
+# ─── Chart 2: All Models comparison ───
 def chart_model_comparison():
     results = []
     for name in MODEL_NAMES:
@@ -246,31 +295,181 @@ def chart_model_comparison():
         Xi = get_input_for_model(name)
         if hasattr(m, "predict_proba"):
             p = m.predict_proba(Xi)[0]
-            results.append({"Model":name,"Alive %":p[0]*100,"Dead %":p[1]*100})
+            results.append({"Model": name, "Alive %": p[0]*100, "Dead %": p[1]*100})
         else:
             pred = m.predict(Xi)[0]
-            results.append({"Model":name,
-                             "Alive %":100 if pred==0 else 0,
-                             "Dead %": 100 if pred==1 else 0})
+            results.append({"Model": name,
+                             "Alive %": 100 if pred == 0 else 0,
+                             "Dead %":  100 if pred == 1 else 0})
     df = pd.DataFrame(results)
     fig, ax = plt.subplots(figsize=CHART_SIZE)
     fig.patch.set_facecolor("white")
     ax.set_facecolor("white")
     x, w = np.arange(len(df)), 0.35
-    ax.bar(x-w/2, df["Alive %"], width=w, color="#15803d", label="Alive", edgecolor="none")
-    ax.bar(x+w/2, df["Dead %"],  width=w, color="#b91c1c", label="Dead",  edgecolor="none")
+    ax.bar(x - w/2, df["Alive %"], width=w, color="#15803d", label="Alive", edgecolor="none")
+    ax.bar(x + w/2, df["Dead %"],  width=w, color="#b91c1c", label="Dead",  edgecolor="none")
     ax.set_xticks(x)
-    ax.set_xticklabels([n.replace(" ","\n") for n in df["Model"]], fontsize=6.5, color="#444")
-    ax.set_ylabel("Probability (%)", fontsize=8, color="#aaa")
-    ax.set_title("All Models — Alive vs Dead", fontsize=9,
-                 color="#6b0f1a", fontweight="bold", pad=10)
-    ax.set_ylim(0,120)
-    ax.legend(fontsize=8, framealpha=0, loc="upper right")
-    ax.tick_params(colors="#777", labelsize=7)
+    ax.set_xticklabels([n.replace(" ", "\n") for n in df["Model"]], fontsize=5.5, color="#444")
+    ax.set_ylabel("Probability (%)", fontsize=7, color="#aaa")
+    ax.set_title("All Models — Alive vs Dead", fontsize=8,
+                 color="#6b0f1a", fontweight="bold", pad=8)
+    ax.set_ylim(0, 120)
+    ax.legend(fontsize=7, framealpha=0, loc="upper right")
+    ax.tick_params(colors="#777", labelsize=6)
     for sp in ax.spines.values(): sp.set_visible(False)
     idx = MODEL_NAMES.index(selected_model)
-    ax.axvspan(idx-0.5, idx+0.5, color="#6b0f1a", alpha=0.08, zorder=0)
-    plt.tight_layout(pad=1.0)
+    ax.axvspan(idx - 0.5, idx + 0.5, color="#6b0f1a", alpha=0.08, zorder=0)
+    plt.tight_layout(pad=0.8)
+    return fig
+
+# ─── Chart 3: Risk Radar (Spider chart) ───
+def chart_risk_radar():
+    node_ratio = reginol_node_pos / max(regional_node_exam, 1)
+
+    # Normalise each feature to 0-1 risk scale (higher = more risk)
+    tumor_risk    = min(tumor_size / 150, 1.0)
+    node_pos_risk = min(reginol_node_pos / 20, 1.0)
+    node_ratio_r  = min(node_ratio, 1.0)
+    estrogen_risk = 0.2 if estrogen == "Positive" else 0.7
+    prog_risk     = 0.2 if progesterone == "Positive" else 0.65
+    stage_risk    = 0.8 if a_stage == "Distant" else 0.3
+
+    categories = ["Tumor\nSize", "Node\nPositive", "Node\nRatio",
+                  "Estrogen\nRisk", "Progest.\nRisk", "Stage\nRisk"]
+    values     = [tumor_risk, node_pos_risk, node_ratio_r,
+                  estrogen_risk, prog_risk, stage_risk]
+
+    N    = len(categories)
+    angles = [n / float(N) * 2 * np.pi for n in range(N)]
+    values_plot = values + [values[0]]
+    angles      = angles + [angles[0]]
+
+    fig, ax = plt.subplots(figsize=(3.4, 3.0), subplot_kw=dict(polar=True))
+    fig.patch.set_facecolor("white")
+    ax.set_facecolor("#fff8f8")
+    ax.plot(angles, values_plot, color="#b91c1c", linewidth=1.5, linestyle="solid")
+    ax.fill(angles, values_plot, color="#b91c1c", alpha=0.2)
+    ax.set_xticks(angles[:-1])
+    ax.set_xticklabels(categories, fontsize=6.5, color="#555")
+    ax.set_ylim(0, 1)
+    ax.set_yticks([0.25, 0.5, 0.75, 1.0])
+    ax.set_yticklabels(["Low", "Med", "High", "Max"], fontsize=5, color="#aaa")
+    ax.grid(color="#ddd", linestyle="--", linewidth=0.5)
+    ax.spines["polar"].set_visible(False)
+    ax.set_title("Risk Factor Radar", fontsize=8, color="#6b0f1a",
+                 fontweight="bold", pad=12)
+    plt.tight_layout(pad=0.5)
+    return fig
+
+# ─── Chart 4: Node Positive Ratio Gauge ───
+def chart_node_gauge():
+    node_ratio = reginol_node_pos / max(regional_node_exam, 1)
+
+    fig, ax = plt.subplots(figsize=(3.4, 2.4))
+    fig.patch.set_facecolor("white")
+    ax.set_facecolor("white")
+    ax.set_xlim(0, 10)
+    ax.set_ylim(0, 5)
+    ax.axis("off")
+
+    # Background arc zones
+    theta = np.linspace(np.pi, 0, 200)
+    for t_start, t_end, color in [
+        (np.pi, 2*np.pi/3,   "#dcfce7"),
+        (2*np.pi/3, np.pi/3, "#fef9c3"),
+        (np.pi/3, 0,         "#fee2e2"),
+    ]:
+        t = np.linspace(t_start, t_end, 60)
+        ax.fill_between(5 + 3.8*np.cos(t), 0.5 + 3.8*np.sin(t),
+                        5 + 2.6*np.cos(t), 0.5 + 2.6*np.sin(t),
+                        color=color, zorder=1)
+
+    # Needle
+    angle     = np.pi - node_ratio * np.pi
+    needle_x  = 5 + 3.2 * np.cos(angle)
+    needle_y  = 0.5 + 3.2 * np.sin(angle)
+    ax.annotate("", xy=(needle_x, needle_y), xytext=(5, 0.5),
+                arrowprops=dict(arrowstyle="->", color="#7f1d1d", lw=1.8))
+    ax.plot(5, 0.5, "o", color="#7f1d1d", markersize=5, zorder=5)
+
+    # Labels
+    ax.text(5, 2.0, f"{node_ratio:.2f}", ha="center", va="center",
+            fontsize=13, fontweight="bold", color="#7f1d1d")
+    ax.text(5, 1.4, "Node Positive Ratio", ha="center", va="center",
+            fontsize=6.5, color="#888")
+    ax.text(1.2, 0.3, "Low", ha="center", fontsize=6, color="#16a34a")
+    ax.text(5,   0.3, "Med", ha="center", fontsize=6, color="#ca8a04")
+    ax.text(8.8, 0.3, "High",ha="center", fontsize=6, color="#b91c1c")
+    ax.set_title("Node Involvement Gauge", fontsize=8, color="#6b0f1a",
+                 fontweight="bold", pad=4)
+    plt.tight_layout(pad=0.5)
+    return fig
+
+# ─── Chart 5: Survival Probability Timeline ───
+def chart_survival_timeline(alive_p):
+    """Approximate survival curve over months (illustrative, based on model output)."""
+    months   = np.linspace(0, 120, 200)
+    # Weibull-like decay shaped by alive_p
+    lam      = -np.log(max(alive_p / 100, 0.01)) / 60
+    survival = np.exp(-lam * months) * 100
+
+    fig, ax = plt.subplots(figsize=CHART_SIZE)
+    fig.patch.set_facecolor("white")
+    ax.set_facecolor("#fff8f8")
+    ax.fill_between(months, survival, alpha=0.18, color="#15803d")
+    ax.plot(months, survival, color="#15803d", linewidth=1.8)
+    ax.axhline(50, color="#b91c1c", linestyle="--", linewidth=0.8, alpha=0.7)
+    ax.text(2, 52, "50% threshold", fontsize=6, color="#b91c1c", alpha=0.8)
+
+    # Mark current survival months
+    if 0 < survival_months <= 120:
+        sv_at = np.interp(survival_months, months, survival)
+        ax.plot(survival_months, sv_at, "o", color="#b91c1c", markersize=5, zorder=5)
+        ax.annotate(f"  {sv_at:.0f}% @ {survival_months}mo",
+                    xy=(survival_months, sv_at), fontsize=6, color="#b91c1c",
+                    xytext=(survival_months + 5, sv_at + 4))
+
+    ax.set_xlim(0, 120)
+    ax.set_ylim(0, 110)
+    ax.set_xlabel("Months", fontsize=7, color="#aaa")
+    ax.set_ylabel("Est. Survival (%)", fontsize=7, color="#aaa")
+    ax.set_title("Estimated Survival Curve", fontsize=8,
+                 color="#6b0f1a", fontweight="bold", pad=8)
+    ax.tick_params(colors="#777", labelsize=7)
+    for sp in ax.spines.values(): sp.set_color("#eee")
+    plt.tight_layout(pad=0.8)
+    return fig
+
+# ─── Chart 6: Feature Impact (horizontal importance bars) ───
+def chart_feature_impact():
+    node_ratio = reginol_node_pos / max(regional_node_exam, 1)
+    raw_vals   = [tumor_size, reginol_node_pos, node_ratio * 100,
+                  survival_months, 0 if estrogen == "Positive" else 50,
+                  0 if progesterone == "Positive" else 40,
+                  80 if a_stage == "Distant" else 20]
+    labels     = ["Tumor Size", "Node Positive", "Node Ratio×100",
+                  "Survival Mo.", "Estrogen Risk", "Progest. Risk", "Stage Risk"]
+    max_v      = max(max(raw_vals), 1)
+    norm_vals  = [v / max_v * 100 for v in raw_vals]
+    colors     = ["#b91c1c" if v > 50 else "#15803d" for v in norm_vals]
+
+    fig, ax = plt.subplots(figsize=CHART_SIZE)
+    fig.patch.set_facecolor("white")
+    ax.set_facecolor("white")
+    bars = ax.barh(labels, norm_vals, color=colors, height=0.45, edgecolor="none")
+    for bar, rv in zip(bars, raw_vals):
+        ax.text(bar.get_width() + 1, bar.get_y() + bar.get_height() / 2,
+                f"{rv:.1f}", va="center", fontsize=6.5, color="#555")
+    ax.set_xlim(0, 115)
+    ax.set_xlabel("Relative Magnitude (%)", fontsize=7, color="#aaa")
+    ax.set_title("Feature Value Impact", fontsize=8,
+                 color="#6b0f1a", fontweight="bold", pad=8)
+    ax.tick_params(colors="#777", labelsize=7)
+    for sp in ax.spines.values(): sp.set_visible(False)
+    red_p  = mpatches.Patch(color="#b91c1c", label="Higher Risk")
+    grn_p  = mpatches.Patch(color="#15803d", label="Lower Risk")
+    ax.legend(handles=[red_p, grn_p], fontsize=6, framealpha=0, loc="lower right")
+    plt.tight_layout(pad=0.8)
     return fig
 
 # ── MAIN ZONE ──
@@ -282,15 +481,15 @@ col1, col2 = st.columns([1.2, 1], gap="large")
 with col1:
     st.markdown('<div class="section-title">📋 Patient Summary</div>', unsafe_allow_html=True)
     summary = pd.DataFrame({
-        "Feature": ["Survival Months","Tumor Size (mm)","Node Positive",
-                    "Node Examined","Node Positive Ratio",
-                    "Estrogen Status","Progesterone Status","A Stage"],
+        "Feature": ["Survival Months", "Tumor Size (mm)", "Node Positive",
+                    "Node Examined", "Node Positive Ratio",
+                    "Estrogen Status", "Progesterone Status", "A Stage"],
         "Value":   [str(survival_months), str(tumor_size), str(reginol_node_pos),
                     str(regional_node_exam), f"{node_ratio:.4f}",
                     estrogen, progesterone, a_stage]
     })
     st.dataframe(summary, use_container_width=True, hide_index=True, height=318)
-    
+
 with col2:
     st.markdown('<div class="section-title">🤖 Prediction Result</div>', unsafe_allow_html=True)
     alive_p, dead_p = 50.0, 50.0
@@ -304,13 +503,13 @@ with col2:
         if pred_label == "Alive":
             st.markdown(f"""<div class="result-alive">
                 <div class="model-badge">{selected_model}</div>
-                <h2>Alive</h2>
+                <h2>✅ Alive</h2>
                 <p>The model predicts the patient is likely to survive.</p>
             </div>""", unsafe_allow_html=True)
         else:
             st.markdown(f"""<div class="result-dead">
                 <div class="model-badge">{selected_model}</div>
-                <h2>Dead</h2>
+                <h2>⚠️ Dead</h2>
                 <p>The model predicts a higher risk of mortality.</p>
             </div>""", unsafe_allow_html=True)
 
@@ -326,19 +525,41 @@ with col2:
                 <span style="color:#b91c1c">● Dead: {dead_p:.1f}%</span>
             </div>""", unsafe_allow_html=True)
     else:
-        st.info("⬆️ Fill in patient details above and click **Predict**.")
+        st.info("⬆️ Fill in patient details above and click **Run Prediction**.")
 
+# ── ANALYTICS ──
 if predict_btn:
-    st.markdown('<div class="section-title" style="margin-top:22px">📊 Analytics</div>',
+    st.markdown('<div class="section-title" style="margin-top:22px">📊 Analytics Dashboard</div>',
                 unsafe_allow_html=True)
-    ch1, ch2 = st.columns(2, gap="large")
+
+    # Row 1
+    ch1, ch2, ch3 = st.columns(3, gap="medium")
     with ch1:
         st.markdown('<div class="chart-wrap">', unsafe_allow_html=True)
         st.pyplot(chart_confidence(alive_p, dead_p, selected_model), use_container_width=True)
         st.markdown('</div>', unsafe_allow_html=True)
     with ch2:
         st.markdown('<div class="chart-wrap">', unsafe_allow_html=True)
+        st.pyplot(chart_risk_radar(), use_container_width=True)
+        st.markdown('</div>', unsafe_allow_html=True)
+    with ch3:
+        st.markdown('<div class="chart-wrap">', unsafe_allow_html=True)
+        st.pyplot(chart_node_gauge(), use_container_width=True)
+        st.markdown('</div>', unsafe_allow_html=True)
+
+    # Row 2
+    ch4, ch5, ch6 = st.columns(3, gap="medium")
+    with ch4:
+        st.markdown('<div class="chart-wrap">', unsafe_allow_html=True)
         st.pyplot(chart_model_comparison(), use_container_width=True)
+        st.markdown('</div>', unsafe_allow_html=True)
+    with ch5:
+        st.markdown('<div class="chart-wrap">', unsafe_allow_html=True)
+        st.pyplot(chart_survival_timeline(alive_p), use_container_width=True)
+        st.markdown('</div>', unsafe_allow_html=True)
+    with ch6:
+        st.markdown('<div class="chart-wrap">', unsafe_allow_html=True)
+        st.pyplot(chart_feature_impact(), use_container_width=True)
         st.markdown('</div>', unsafe_allow_html=True)
 
 st.markdown('</div>', unsafe_allow_html=True)
