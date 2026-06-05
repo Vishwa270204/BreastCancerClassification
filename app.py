@@ -229,7 +229,7 @@ def chart_confidence(alive_p, dead_p, model_name):
     fig, ax = plt.subplots(figsize=CHART_SIZE)
     fig.patch.set_facecolor("white")
     ax.set_facecolor("white")
-    bars = ax.barh(["Deceased","Alive"], [dead_p, alive_p],
+    bars = ax.barh(["Dead","Alive"], [dead_p, alive_p],
                    color=["#b91c1c","#15803d"], height=0.44, edgecolor="none")
     for bar, val in zip(bars, [dead_p, alive_p]):
         ax.text(val+1.5, bar.get_y()+bar.get_height()/2,
@@ -266,7 +266,7 @@ def chart_model_comparison():
     ax.set_xticks(x)
     ax.set_xticklabels([n.replace(" ","\n") for n in df["Model"]], fontsize=6.5, color="#444")
     ax.set_ylabel("Probability (%)", fontsize=8, color="#aaa")
-    ax.set_title("All Models — Alive vs Deceased", fontsize=9,
+    ax.set_title("All Models — Alive vs Dead", fontsize=9,
                  color="#6b0f1a", fontweight="bold", pad=10)
     ax.set_ylim(0,120)
     ax.legend(fontsize=8, framealpha=0, loc="upper right")
@@ -327,7 +327,7 @@ with col2:
                 <strong>Confidence: {confidence:.1f}%</strong><br>
                 <span style="color:#15803d">● Alive: {alive_p:.1f}%</span>
                 &nbsp;&nbsp;
-                <span style="color:#b91c1c">● Deceased: {dead_p:.1f}%</span>
+                <span style="color:#b91c1c">● Dead: {dead_p:.1f}%</span>
             </div>""", unsafe_allow_html=True)
     else:
         st.info("⬆️ Fill in patient details above and click **Predict**.")
