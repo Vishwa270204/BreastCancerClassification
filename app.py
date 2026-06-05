@@ -4,18 +4,8 @@ import numpy as np
 import joblib
 import os
 
-# ─────────────────────────────────────────────
-#  PAGE CONFIG
-# ─────────────────────────────────────────────
-st.set_page_config(
-    page_title="Breast Cancer Survival Predictor",
-    page_icon="🎗️",
-    layout="wide",
-)
+st.set_page_config(page_title="Breast Cancer Survival Predictor", page_icon="🎗️", layout="wide")
 
-# ─────────────────────────────────────────────
-#  CUSTOM CSS
-# ─────────────────────────────────────────────
 st.markdown("""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500;600&display=swap');
@@ -66,9 +56,7 @@ div[data-testid="stSidebar"] * { color: white !important; }
 </style>
 """, unsafe_allow_html=True)
 
-# ─────────────────────────────────────────────
-#  LOAD PKL
-# ─────────────────────────────────────────────
+# ── LOAD PKL ──
 PKL_PATH = "breast_cancer_models_compressed.pkl"
 
 @st.cache_resource
@@ -76,23 +64,19 @@ def load_bundle(path):
     return joblib.load(path)
 
 if not os.path.exists(PKL_PATH):
-    st.error(f"❌ `{PKL_PATH}` not found. Place it in the same folder as app.py.")
+    st.error(f"❌ `{PKL_PATH}` not found.")
     st.stop()
 
 bundle        = load_bundle(PKL_PATH)
 scaler        = bundle["scaler"]
-features      = bundle["features"]
+features      = bundle["features"]   # actual list saved in pkl
 label_encoder = bundle["label_encoder"]
 
-MODEL_NAMES   = [
-    "Logistic Regression", "KNN", "Random Forest", "Decision Tree",
-    "SVM", "Gradient Boosting", "Naive Bayes", "XGBoost"
-]
+MODEL_NAMES   = ["Logistic Regression", "KNN", "Random Forest", "Decision Tree",
+                 "SVM", "Gradient Boosting", "Naive Bayes", "XGBoost"]
 SCALED_MODELS = {"Logistic Regression", "KNN", "SVM", "Naive Bayes"}
 
-# ─────────────────────────────────────────────
-#  HEADER
-# ─────────────────────────────────────────────
+# ── HEADER ──
 st.markdown("""
 <div class="header-card">
     <h1>🎗️ Breast Cancer Survival Predictor</h1>
@@ -100,61 +84,53 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-# ─────────────────────────────────────────────
-#  SIDEBAR
-# ─────────────────────────────────────────────
+# ── SIDEBAR ──
 with st.sidebar:
     st.markdown("## ⚙️ Model")
     selected_model = st.selectbox("Select Model", MODEL_NAMES)
-
     st.markdown("---")
     st.markdown("## 🧬 Patient Details")
 
     survival_months     = st.number_input("Survival Months", min_value=1, max_value=120, value=40, step=1)
     tumor_size          = st.number_input("Tumor Size (mm)", min_value=1, max_value=200, value=25, step=1)
-    node_positive_ratio = st.number_input("Node Positive Ratio", min_value=0.0, max_value=1.0, value=0.2, step=0.01,
-                                          help="Reginol Node Positive ÷ Regional Node Examined (e.g. 2/10 = 0.20)")
-    estrogen     = st.selectbox("Estrogen Status",     ["Positive", "Negative"])
-    progesterone = st.selectbox("Progesterone Status", ["Positive", "Negative"])
-    a_stage      = st.selectbox("A Stage",             ["Regional", "Distant"])
+    reginol_node_pos    = st.number_input("Reginol Node Positive", min_value=0, max_value=50, value=2, step=1)
+    regional_node_exam  = st.number_input("Regional Node Examined", min_value=1, max_value=60, value=10, step=1)
+    estrogen            = st.selectbox("Estrogen Status",     ["Positive", "Negative"])
+    progesterone        = st.selectbox("Progesterone Status", ["Positive", "Negative"])
+    a_stage             = st.selectbox("A Stage",             ["Regional", "Distant"])
 
     predict_btn = st.button("🔍 Predict", use_container_width=True)
 
-# ─────────────────────────────────────────────
-#  FEATURE VECTOR  — matches features list exactly
-# ─────────────────────────────────────────────
+# ── FEATURE VECTOR — dynamically maps to whatever features are in pkl ──
 def build_input():
-    row = {
-        "Survival Months":     survival_months,
-        "Node_Positive_Ratio": node_positive_ratio,
-        "Estrogen Status":     0 if estrogen == "Positive" else 1,
-        "Progesterone Status": 0 if progesterone == "Positive" else 1,
-        "Tumor Size":          tumor_size,
-        "A Stage":             0 if a_stage == "Regional" else 1,
+    node_ratio = reginol_node_pos / max(regional_node_exam, 1)
+    mapping = {
+        "Survival Months":      survival_months,
+        "Tumor Size":           tumor_size,
+        "Reginol Node Positive": reginol_node_pos,
+        "Regional Node Examined": regional_node_exam,
+        "Node_Positive_Ratio":  node_ratio,
+        "Estrogen Status":      0 if estrogen == "Positive" else 1,
+        "Progesterone Status":  0 if progesterone == "Positive" else 1,
+        "A Stage":              0 if a_stage == "Regional" else 1,
     }
+    # Only pick the features that are actually in the pkl
+    row = {f: mapping[f] for f in features}
     return pd.DataFrame([row])[features]
 
-# ─────────────────────────────────────────────
-#  LAYOUT
-# ─────────────────────────────────────────────
+# ── LAYOUT ──
 col1, col2 = st.columns([1.5, 1], gap="large")
 
 with col1:
     st.markdown('<div class="section-title">📋 Patient Summary</div>', unsafe_allow_html=True)
-
-    node_ratio = node_positive_ratio
-
-    # All values as strings to avoid Arrow mixed-type error
+    node_ratio = reginol_node_pos / max(regional_node_exam, 1)
     summary = pd.DataFrame({
-        "Feature": [
-            "Survival Months", "Tumor Size (mm)", "Node Positive Ratio",
-            "Estrogen Status", "Progesterone Status", "A Stage"
-        ],
-        "Value": [
-            str(survival_months), str(tumor_size),
-            f"{node_ratio:.4f}",
-            estrogen, progesterone, a_stage
-        ]
+        "Feature": ["Survival Months", "Tumor Size (mm)", "Reginol Node Positive",
+                    "Regional Node Examined", "Node Positive Ratio",
+                    "Estrogen Status", "Progesterone Status", "A Stage"],
+        "Value":   [str(survival_months), str(tumor_size), str(reginol_node_pos),
+                    str(regional_node_exam), f"{node_ratio:.4f}",
+                    estrogen, progesterone, a_stage]
     })
     st.dataframe(summary, use_container_width=True, hide_index=True)
     st.caption(f"Features used by model: {', '.join(features)}")
@@ -163,23 +139,21 @@ with col2:
     st.markdown('<div class="section-title">🤖 Prediction Result</div>', unsafe_allow_html=True)
 
     if predict_btn:
-        model  = bundle[selected_model]
-        X      = build_input()
+        model   = bundle[selected_model]
+        X       = build_input()
         X_input = scaler.transform(X) if selected_model in SCALED_MODELS else X.values
 
         pred_encoded = model.predict(X_input)[0]
         pred_label   = label_encoder.inverse_transform([pred_encoded])[0]
 
         if pred_label == "Alive":
-            st.markdown(f"""
-            <div class="result-alive">
+            st.markdown(f"""<div class="result-alive">
                 <div class="model-badge">{selected_model}</div>
                 <h2>✅ Alive</h2>
                 <p>The model predicts the patient is likely to survive.</p>
             </div>""", unsafe_allow_html=True)
         else:
-            st.markdown(f"""
-            <div class="result-dead">
+            st.markdown(f"""<div class="result-dead">
                 <div class="model-badge">{selected_model}</div>
                 <h2>⚠️ Deceased</h2>
                 <p>The model predicts a higher risk of mortality.</p>
@@ -190,15 +164,13 @@ with col2:
             confidence = proba[pred_encoded] * 100
             alive_p    = proba[0] * 100
             dead_p     = proba[1] * 100
-            st.markdown(f"""
-            <div class="prob-card">
+            st.markdown(f"""<div class="prob-card">
                 <strong>Confidence: {confidence:.1f}%</strong><br>
                 <span style="color:#27ae60">Alive: {alive_p:.1f}%</span> &nbsp;|&nbsp;
                 <span style="color:#c0392b">Dead: {dead_p:.1f}%</span>
             </div>""", unsafe_allow_html=True)
 
-        st.markdown("""
-        <div class="info-box">
+        st.markdown("""<div class="info-box">
             ⚠️ <strong>Disclaimer:</strong> This tool is for educational purposes only
             and is not a substitute for clinical diagnosis.
         </div>""", unsafe_allow_html=True)
