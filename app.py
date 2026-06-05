@@ -26,7 +26,7 @@ h1, h2, h3 {
 
 div[data-testid="stSidebar"] {
     background: #0f172a;
-}
+} 
 
 div[data-testid="stSidebar"] * {
     color: white !important;
