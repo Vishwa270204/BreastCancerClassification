@@ -183,14 +183,8 @@ st.markdown("""
     <span style="font-size:2rem">🎗️</span>
     <div>
         <h1>Breast Cancer Survival Predictor</h1>
-        <p>ML-powered risk assessment &nbsp;·&nbsp; For educational use only</p>
     </div>
-    <div class="hbar-divider"></div>
-    <p style="color:rgba(255,255,255,0.55);font-size:0.72rem;margin:0;line-height:1.7">
-        8 Models &nbsp;·&nbsp; LR · KNN · RF · DT · SVM · GB · NB · XGB
-    </p>
-</div>
-""", unsafe_allow_html=True)
+    """, unsafe_allow_html=True)
 
 # ── INPUT ZONE — open wrapper div, render columns, close div ──
 st.markdown('<div class="input-zone">', unsafe_allow_html=True)
