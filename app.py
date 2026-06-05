@@ -47,12 +47,6 @@ section[data-testid="stSidebar"] { display: none !important; }
 .header-bar p { font-size: 0.77rem; color: rgba(255,255,255,0.72); margin: 0; }
 .hbar-divider { width:1px; height:40px; background:rgba(255,255,255,0.22); margin: 0 8px; }
 
-/* ── Input strip: target the container by its data-testid key ── */
-[data-testid="stVerticalBlock"]:has(> [data-testid="stVerticalBlockBorderWrapper"] > div > [data-testid="stHorizontalBlock"] > div:nth-child(9) button) {
-    background: #1c0608;
-    padding: 14px 20px 18px 20px;
-    margin-bottom: 0;
-}
 
 /* Simpler approach: use a landmark class on a container */
 .input-zone {
