@@ -223,7 +223,7 @@ def get_input_for_model(name):
     X = build_input()
     return scaler.transform(X) if name in SCALED_MODELS else X.values
 
-CHART_SIZE = (3, 3)
+CHART_SIZE = (5.2, 3)
 
 def chart_confidence(alive_p, dead_p, model_name):
     fig, ax = plt.subplots(figsize=CHART_SIZE)
