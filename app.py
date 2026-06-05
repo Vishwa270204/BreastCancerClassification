@@ -249,6 +249,3 @@ with col2:
 
     else:
         st.info("👈 Fill in patient details in the sidebar and click **Predict**.")
-
-    else:
-        st.info("👈 Fill in patient details in the sidebar and click **Predict**.")
