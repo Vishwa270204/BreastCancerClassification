@@ -110,10 +110,10 @@ with st.sidebar:
     st.markdown("---")
     st.markdown("## 🧬 Patient Details")
 
-    survival_months = st.number_input("Survival Months", min_value=1, max_value=120, value=40, step=1)
-    tumor_size      = st.number_input("Tumor Size (mm)", min_value=1, max_value=200, value=25, step=1)
-    reginol_node_positive  = st.number_input("Reginol Node Positive",  min_value=0, max_value=50, value=2, step=1)
-    regional_node_examined = st.number_input("Regional Node Examined", min_value=1, max_value=60, value=10, step=1)
+    survival_months     = st.number_input("Survival Months", min_value=1, max_value=120, value=40, step=1)
+    tumor_size          = st.number_input("Tumor Size (mm)", min_value=1, max_value=200, value=25, step=1)
+    node_positive_ratio = st.number_input("Node Positive Ratio", min_value=0.0, max_value=1.0, value=0.2, step=0.01,
+                                          help="Reginol Node Positive ÷ Regional Node Examined (e.g. 2/10 = 0.20)")
     estrogen     = st.selectbox("Estrogen Status",     ["Positive", "Negative"])
     progesterone = st.selectbox("Progesterone Status", ["Positive", "Negative"])
     a_stage      = st.selectbox("A Stage",             ["Regional", "Distant"])
@@ -124,7 +124,6 @@ with st.sidebar:
 #  FEATURE VECTOR  — matches features list exactly
 # ─────────────────────────────────────────────
 def build_input():
-    node_positive_ratio = reginol_node_positive / max(regional_node_examined, 1)
     row = {
         "Survival Months":     survival_months,
         "Node_Positive_Ratio": node_positive_ratio,
@@ -143,18 +142,16 @@ col1, col2 = st.columns([1.5, 1], gap="large")
 with col1:
     st.markdown('<div class="section-title">📋 Patient Summary</div>', unsafe_allow_html=True)
 
-    node_ratio = reginol_node_positive / max(regional_node_examined, 1)
+    node_ratio = node_positive_ratio
 
     # All values as strings to avoid Arrow mixed-type error
     summary = pd.DataFrame({
         "Feature": [
-            "Survival Months", "Tumor Size (mm)", "Node Positive",
-            "Nodes Examined", "Node Positive Ratio",
+            "Survival Months", "Tumor Size (mm)", "Node Positive Ratio",
             "Estrogen Status", "Progesterone Status", "A Stage"
         ],
         "Value": [
             str(survival_months), str(tumor_size),
-            str(reginol_node_positive), str(regional_node_examined),
             f"{node_ratio:.4f}",
             estrogen, progesterone, a_stage
         ]
