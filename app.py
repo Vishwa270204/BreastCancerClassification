@@ -90,7 +90,7 @@ div[data-testid="stSidebar"] .stNumberInput label {
 # ─────────────────────────────────────────────
 #  LOAD PKL  (joblib, single file)
 # ─────────────────────────────────────────────
-PKL_PATH = "breast_cancer_models.pkl"
+PKL_PATH = "breast_cancer_models_compressed.pkl"
 
 @st.cache_resource
 def load_bundle(path):
