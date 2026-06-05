@@ -386,33 +386,14 @@ if predict_btn:
                 unsafe_allow_html=True)
 
     # Row 1
-    ch1, ch2, ch3 = st.columns(3, gap="medium")
+    ch1, ch2, c = st.columns(2, gap="medium")
     with ch1:
         st.markdown('<div class="chart-wrap">', unsafe_allow_html=True)
         st.pyplot(chart_confidence(alive_p, dead_p, selected_model), use_container_width=True)
         st.markdown('</div>', unsafe_allow_html=True)
     with ch2:
         st.markdown('<div class="chart-wrap">', unsafe_allow_html=True)
-        st.pyplot(chart_risk_radar(), use_container_width=True)
-        st.markdown('</div>', unsafe_allow_html=True)
-    with ch3:
-        st.markdown('<div class="chart-wrap">', unsafe_allow_html=True)
-        st.pyplot(chart_node_gauge(), use_container_width=True)
-        st.markdown('</div>', unsafe_allow_html=True)
-
-    # Row 2
-    ch4, ch5, ch6 = st.columns(3, gap="medium")
-    with ch4:
-        st.markdown('<div class="chart-wrap">', unsafe_allow_html=True)
         st.pyplot(chart_model_comparison(), use_container_width=True)
         st.markdown('</div>', unsafe_allow_html=True)
-    with ch5:
-        st.markdown('<div class="chart-wrap">', unsafe_allow_html=True)
-        st.pyplot(chart_survival_timeline(alive_p), use_container_width=True)
-        st.markdown('</div>', unsafe_allow_html=True)
-    with ch6:
-        st.markdown('<div class="chart-wrap">', unsafe_allow_html=True)
-        st.pyplot(chart_feature_impact(), use_container_width=True)
-        st.markdown('</div>', unsafe_allow_html=True)
-
+    \
 st.markdown('</div>', unsafe_allow_html=True)
