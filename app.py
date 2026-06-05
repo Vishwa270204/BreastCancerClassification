@@ -33,17 +33,16 @@ div[data-testid="stSidebar"] * {
 }
 
 .header-card {
-    background: linear-gradient(135deg, #1e40af, #2563eb);
-    border-radius: 16px;
-    padding: 22px 30px;
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    border-radius: 12px;
+    padding: 14px 24px;
     color: white;
-    margin-bottom: 20px;
-    box-shadow: 0 8px 32px rgba(37,99,235,0.25);
+    margin-bottom: 12px;
 }
 
 .header-card h1 {
-    font-size: 1.7rem;
-    margin: 0 0 6px 0;
+    font-size: 1.35rem;
+    margin: 0;
     color: white;
 }
 
