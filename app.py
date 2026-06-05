@@ -171,17 +171,16 @@ def get_input_for_model(model_name):
     X = build_input()
     return scaler.transform(X) if model_name in SCALED_MODELS else X.values
 
-# ── CHART 1: Confidence Bar (Alive vs Dead) ──
 def chart_confidence(alive_p, dead_p, model_name):
-    fig, ax = plt.subplots(figsize=(8, 3))
+    fig, ax = plt.subplots(figsize=(6, 2))
 
-    fig.patch.set_facecolor("#eef6ff")
-    ax.set_facecolor("#eef6ff")
+    fig.patch.set_facecolor("#f8fafc")
+    ax.set_facecolor("#f8fafc")
 
     bars = ax.barh(
         ["Dead", "Alive"],
         [dead_p, alive_p],
-        color=["#93c5fd", "#2563eb"]
+        color=["#dc2626", "#16a34a"]
     )
 
     for bar, val in zip(bars, [dead_p, alive_p]):
@@ -190,64 +189,113 @@ def chart_confidence(alive_p, dead_p, model_name):
             bar.get_y() + bar.get_height()/2,
             f"{val:.1f}%",
             va="center",
+            fontsize=9,
             fontweight="bold"
         )
 
     ax.set_xlim(0, 115)
-    ax.set_xlabel("Probability (%)")
+    ax.set_xlabel("Probability (%)", fontsize=8)
     ax.set_title(
         f"Prediction Confidence — {model_name}",
-        color="#1e40af",
+        fontsize=10,
+        color="#374151",
         fontweight="bold"
     )
 
+    ax.tick_params(labelsize=8)
+
     for spine in ax.spines.values():
         spine.set_visible(False)
 
     plt.tight_layout()
     return fig
-# ── CHART 2: All Models Comparison ──
+
 def chart_model_comparison():
     results = []
+
     for name in MODEL_NAMES:
         m = bundle[name]
         Xi = get_input_for_model(name)
+
         if hasattr(m, "predict_proba"):
             p = m.predict_proba(Xi)[0]
-            results.append({"Model": name, "Alive %": p[0]*100, "Dead %": p[1]*100})
+            results.append({
+                "Model": name,
+                "Alive %": p[0] * 100,
+                "Dead %": p[1] * 100
+            })
         else:
             pred = m.predict(Xi)[0]
-            results.append({"Model": name, "Alive %": 100 if pred == 0 else 0,
-                            "Dead %": 100 if pred == 1 else 0})
+            results.append({
+                "Model": name,
+                "Alive %": 100 if pred == 0 else 0,
+                "Dead %": 100 if pred == 1 else 0
+            })
 
     df = pd.DataFrame(results)
-    fig, ax = plt.subplots(figsize=(6, 2))
-    fig.patch.set_facecolor("#fdf6f0")
-    ax.set_facecolor("#fdf6f0")
+
+    fig, ax = plt.subplots(figsize=(7, 2.8))
+
+    fig.patch.set_facecolor("#f8fafc")
+    ax.set_facecolor("#f8fafc")
 
     x = np.arange(len(df))
-    w = 0.38
-    ax.bar(x - w/2, df["Alive %"], width=w, color="#27ae60", label="Alive", edgecolor="none")
-    ax.bar(x + w/2, df["Dead %"],  width=w, color="#c0392b", label="Dead",  edgecolor="none")
+    w = 0.35
+
+    ax.bar(
+        x - w/2,
+        df["Alive %"],
+        width=w,
+        color="#16a34a",
+        label="Alive",
+        edgecolor="none"
+    )
+
+    ax.bar(
+        x + w/2,
+        df["Dead %"],
+        width=w,
+        color="#dc2626",
+        label="Dead",
+        edgecolor="none"
+    )
 
     ax.set_xticks(x)
-    ax.set_xticklabels(df["Model"], rotation=30, ha="right", fontsize=8, color="#333")
-    ax.set_ylabel("Probability (%)", fontsize=9, color="#555")
-    ax.set_title("All Models — Alive vs Dead Probability", fontsize=11,
-                 color="#8b1a1a", fontweight="bold")
+    ax.set_xticklabels(
+        df["Model"],
+        rotation=25,
+        ha="right",
+        fontsize=7
+    )
+
+    ax.set_ylabel("Probability (%)", fontsize=8)
+
+    ax.set_title(
+        "All Models Comparison",
+        fontsize=10,
+        color="#374151",
+        fontweight="bold"
+    )
+
     ax.set_ylim(0, 115)
-    ax.legend(fontsize=9)
-    ax.tick_params(colors="#555")
+
+    ax.legend(fontsize=8)
+
     for spine in ax.spines.values():
         spine.set_visible(False)
 
-    # highlight selected model
     idx = MODEL_NAMES.index(selected_model)
-    ax.axvspan(idx - 0.5, idx + 0.5, color="#8b1a1a", alpha=0.07, zorder=0)
+
+    ax.axvspan(
+        idx - 0.5,
+        idx + 0.5,
+        color="#9ca3af",
+        alpha=0.10,
+        zorder=0
+    )
 
     plt.tight_layout()
     return fig
-
 # ── LAYOUT ──
 col1, col2 = st.columns([1.5, 1], gap="large")
 
