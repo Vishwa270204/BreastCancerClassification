@@ -215,7 +215,7 @@ def chart_model_comparison():
                             "Dead %": 100 if pred == 1 else 0})
 
     df = pd.DataFrame(results)
-    fig, ax = plt.subplots(figsize=(8, 4))
+    fig, ax = plt.subplots(figsize=(6, 2))
     fig.patch.set_facecolor("#fdf6f0")
     ax.set_facecolor("#fdf6f0")
 
