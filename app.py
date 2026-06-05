@@ -226,7 +226,7 @@ st.markdown("""
 st.markdown('<div class="input-zone-wrapper">', unsafe_allow_html=True)
 
 # Row label
-st.markdown('<div class="section-title">⚙️ Patient Input Parameters</div>', unsafe_allow_html=True)
+st.markdown('<div class="section-title">Patient Input Parameters</div>', unsafe_allow_html=True)
 
 # ROW 1 — Numerical inputs
 r1c1, r1c2, r1c3, r1c4, r1c5 = st.columns([1.4, 1.2, 1.2, 1.2, 1.2])
