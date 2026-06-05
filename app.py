@@ -24,7 +24,7 @@ h1, h2, h3 {
     background: linear-gradient(135deg, #fafafa, #f3f4f6);}
 
 div[data-testid="stSidebar"] {
-    background: #0f172a;
+    background: #111827;
 } 
 
 div[data-testid="stSidebar"] * {
@@ -32,17 +32,17 @@ div[data-testid="stSidebar"] * {
 }
 
 .header-card {
-    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    background: linear-gradient(135deg, #374151, #4b5563);
     border-radius: 12px;
     padding: 14px 24px;
-    color: white;
+    color: #374151;
     margin-bottom: 12px;
 }
 
 .header-card h1 {
     font-size: 1.35rem;
     margin: 0;
-    color: white;
+    color: #374151;
 }
 
 .header-card p {
