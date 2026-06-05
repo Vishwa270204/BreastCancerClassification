@@ -167,7 +167,7 @@ scaler        = bundle["scaler"]
 features      = bundle["features"]
 label_encoder = bundle["label_encoder"]
 
-_NAMES   = ["Logistic Regression", "KNN", "Random Forest", "Decision Tree",
+MODEL_NAMES   = ["Logistic Regression", "KNN", "Random Forest", "Decision Tree",
                  "SVM", "Gradient Boosting", "Naive Bayes", "XGBoost"]
 SCALED_S = {"Logistic Regression", "KNN", "SVM", "Naive Bayes"}
 
