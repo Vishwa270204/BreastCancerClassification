@@ -668,7 +668,7 @@ with col_left:
     })
 
     st.markdown('<div class="summary-card">', unsafe_allow_html=True)
-    st.dataframe(summary, use_container_width=True, hide_index=True, height=260)
+    st.dataframe(summary, width="stretch", hide_index=True, height=260)
     st.markdown('</div>', unsafe_allow_html=True)
     st.caption(f"Active model: **{selected_model}**  ·  Features used: {len(features)}")
 
@@ -740,11 +740,11 @@ if predict_btn:
     with c1:
         st.markdown('<p class="sec-label">📊 Prediction Confidence</p>', unsafe_allow_html=True)
         st.markdown('<div class="chart-card">', unsafe_allow_html=True)
-        st.pyplot(chart_confidence(alive_p, dead_p, selected_model), use_container_width=True)
+        st.pyplot(chart_confidence(alive_p, dead_p, selected_model), width="stretch")
         st.markdown('</div>', unsafe_allow_html=True)
 
     with c2:
         st.markdown('<p class="sec-label">📊 All Models Comparison</p>', unsafe_allow_html=True)
         st.markdown('<div class="chart-card">', unsafe_allow_html=True)
-        st.pyplot(chart_model_comparison(), use_container_width=True)
-        st.markdown('</div>', unsafe_allow_html=True) 
+        st.pyplot(chart_model_comparison(), width="stretch")
+        st.markdown('</div>', unsafe_allow_html=True)
