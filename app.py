@@ -53,7 +53,8 @@ header[data-testid="stHeader"] {
 div[data-testid="stSidebar"] {
     background: #111827 !important;
     border-right: 1px solid #1f2937 !important;
-    width: 260px !important;
+    width: 300px !important;
+    min-width: 300px !important;
 }
 
 div[data-testid="stSidebar"] > div {
@@ -163,27 +164,40 @@ div[data-testid="stSidebar"] .stNumberInput {
 }
 
 /* ═══════════════════════════════════════════
-   FULL-WIDTH HEADER HERO
+   FULL-WIDTH HEADER — Clean Single Title Card
 ═══════════════════════════════════════════ */
 .hero-header {
-    background: linear-gradient(100deg, #16a34a 0%, #15803d 30%, #991b1b 70%, #dc2626 100%);
+    background: linear-gradient(110deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
     border-radius: 14px;
-    padding: 14px 28px;
+    padding: 0 32px;
     margin-bottom: 12px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    box-shadow: 0 4px 24px rgba(0,0,0,0.18);
+    box-shadow: 0 4px 24px rgba(0,0,0,0.22), inset 0 1px 0 rgba(255,255,255,0.06);
     position: relative;
     overflow: hidden;
-    min-height: 68px;
+    min-height: 64px;
+    border: 1px solid #1e293b;
 }
 
+/* accent left stripe */
+.hero-header::after {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 4px;
+    background: linear-gradient(180deg, #16a34a 0%, #dc2626 100%);
+    border-radius: 14px 0 0 14px;
+}
+
+/* subtle dot pattern overlay */
 .hero-header::before {
     content: '';
     position: absolute;
     top: 0; left: 0; right: 0; bottom: 0;
-    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Ccircle cx='30' cy='30' r='20'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    background-image: radial-gradient(circle, rgba(255,255,255,0.03) 1px, transparent 1px);
+    background-size: 22px 22px;
     pointer-events: none;
 }
 
@@ -191,64 +205,69 @@ div[data-testid="stSidebar"] .stNumberInput {
     display: flex;
     align-items: center;
     gap: 14px;
+    position: relative;
+    z-index: 1;
 }
 
 .hero-ribbon {
-    font-size: 2rem;
+    font-size: 1.9rem;
     line-height: 1;
-    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+    filter: drop-shadow(0 2px 6px rgba(0,0,0,0.4));
 }
 
 .hero-text h1 {
     font-family: 'Sora', sans-serif !important;
-    font-size: 1.22rem !important;
+    font-size: 1.18rem !important;
     font-weight: 800 !important;
-    color: white !important;
+    color: #f8fafc !important;
     margin: 0 0 3px 0 !important;
     letter-spacing: -0.01em;
     line-height: 1.2;
 }
 
 .hero-text p {
-    font-size: 0.78rem;
-    color: rgba(255,255,255,0.8);
+    font-size: 0.75rem;
+    color: rgba(148,163,184,0.9);
     margin: 0;
     font-weight: 400;
+    letter-spacing: 0.01em;
 }
 
 .hero-right {
     display: flex;
     align-items: center;
-    gap: 18px;
-    opacity: 0.85;
+    gap: 20px;
+    position: relative;
+    z-index: 1;
 }
 
 .hero-stat {
     text-align: center;
-    color: white;
 }
 
 .hero-stat .stat-num {
     font-family: 'Sora', sans-serif;
-    font-size: 1.1rem;
+    font-size: 1.05rem;
     font-weight: 800;
     display: block;
     line-height: 1;
+    color: #f1f5f9;
 }
 
 .hero-stat .stat-lbl {
-    font-size: 0.65rem;
-    opacity: 0.8;
+    font-size: 0.62rem;
+    color: #64748b;
     text-transform: uppercase;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.09em;
     display: block;
-    margin-top: 2px;
+    margin-top: 3px;
+    font-weight: 600;
 }
 
 .hero-divider {
     width: 1px;
-    height: 36px;
-    background: rgba(255,255,255,0.25);
+    height: 32px;
+    background: rgba(100,116,139,0.4);
 }
 
 /* ═══════════════════════════════════════════
@@ -568,8 +587,10 @@ def get_input_for_model(model_name):
 # ══════════════════════════════
 # CHARTS
 # ══════════════════════════════
+CHART_SIZE = (4.8, 2.2)   # ← single source of truth for both charts
+
 def chart_confidence(alive_p, dead_p, model_name):
-    fig, ax = plt.subplots(figsize=(4.8, 1.5))
+    fig, ax = plt.subplots(figsize=CHART_SIZE)
     fig.patch.set_facecolor("white")
     ax.set_facecolor("white")
 
@@ -577,7 +598,7 @@ def chart_confidence(alive_p, dead_p, model_name):
     labels = ["Dead", "Alive"]
     colors = ["#dc2626", "#16a34a"]
 
-    bars = ax.barh(labels, vals, color=colors, height=0.45, edgecolor="none")
+    bars = ax.barh(labels, vals, color=colors, height=0.42, edgecolor="none")
 
     for bar, val in zip(bars, vals):
         ax.text(val + 1.2, bar.get_y() + bar.get_height()/2,
@@ -590,12 +611,15 @@ def chart_confidence(alive_p, dead_p, model_name):
                  fontweight="bold", pad=6)
     ax.tick_params(labelsize=7.5, colors="#6b7280")
 
+    # Vertical padding so bars sit in the same canvas space as comparison chart
+    ax.set_ylim(-1.2, 2.2)
+
     for spine in ax.spines.values():
         spine.set_visible(False)
     ax.xaxis.grid(True, color="#f3f4f6", linewidth=0.8)
     ax.set_axisbelow(True)
 
-    plt.tight_layout(pad=0.4)
+    plt.tight_layout(pad=0.5)
     return fig
 
 
@@ -614,7 +638,7 @@ def chart_model_comparison():
                              "Dead %":  100 if pred == 1 else 0})
 
     df = pd.DataFrame(results)
-    fig, ax = plt.subplots(figsize=(4.8, 2.2))
+    fig, ax = plt.subplots(figsize=CHART_SIZE)
     fig.patch.set_facecolor("white")
     ax.set_facecolor("white")
 
