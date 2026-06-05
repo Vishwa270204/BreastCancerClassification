@@ -181,17 +181,7 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-# Optional: Style the input row background
-st.markdown("""
-<style>
-[data-testid="stHorizontalBlock"] {
-    background: #1c0608;
-    padding: 14px 20px 18px 20px;
-    border-radius: 0;
-    margin-bottom: 0;
-}
-</style>
-""", unsafe_allow_html=True)
+
 # ── INPUT ZONE — open wrapper div, render columns, close div ──
 st.markdown('<div class="input-zone">', unsafe_allow_html=True)
 
