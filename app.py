@@ -334,7 +334,7 @@ if predict_btn:
     ch1, ch2 = st.columns(2, gap="large")
     with ch1:
         st.markdown('<div class="chart-wrap">', unsafe_allow_html=True)
-        st.pyplot(chart_confidence(alive_p, dead_p, selected_), use_container_width=True)
+        st.pyplot(chart_confidence(alive_p, dead_p, selected_model), use_container_width=True)
         st.markdown('</div>', unsafe_allow_html=True)
     with ch2:
         st.markdown('<div class="chart-wrap">', unsafe_allow_html=True)
