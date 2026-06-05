@@ -747,4 +747,4 @@ if predict_btn:
         st.markdown('<p class="sec-label">📊 All Models Comparison</p>', unsafe_allow_html=True)
         st.markdown('<div class="chart-card">', unsafe_allow_html=True)
         st.pyplot(chart_model_comparison(), use_container_width=True)
-        st.markdown('</div>', unsafe_allow_html=True)
+        st.markdown('</div>', unsafe_allow_html=True) 
