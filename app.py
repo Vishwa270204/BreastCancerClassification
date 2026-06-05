@@ -152,7 +152,7 @@ section[data-testid="stSidebar"] { display: none !important; }
 """, unsafe_allow_html=True)
 
 # ── LOAD PKL ──
-PKL_PATH = "breast_cancer_models.pkl"
+PKL_PATH = "breast_cancer_s.pkl"
 
 @st.cache_resource
 def load_bundle(path):
@@ -178,14 +178,20 @@ st.markdown("""
     <div>
         <h1>Breast Cancer Survival Predictor</h1>
     </div>
-    """, unsafe_allow_html=True)
- # Input strip: target the container by its data-testid key
-[data-testid="stVerticalBlock"]:has(> [data-testid="stVerticalBlockBorderWrapper"] > div > [data-testid="stHorizontalBlock"] > div:nth-child(9) button) {
+</div>
+""", unsafe_allow_html=True)
+
+# Optional: Style the input row background
+st.markdown("""
+<style>
+[data-testid="stHorizontalBlock"] {
     background: #1c0608;
     padding: 14px 20px 18px 20px;
+    border-radius: 0;
     margin-bottom: 0;
 }
-
+</style>
+""", unsafe_allow_html=True)
 # ── INPUT ZONE — open wrapper div, render columns, close div ──
 st.markdown('<div class="input-zone">', unsafe_allow_html=True)
 
