@@ -67,7 +67,8 @@ input[type="number"] {
     padding: 2px 8px !important;
     min-width: 120px !important;
     width: 100% !important;
-}#input-panel button[data-testid="stNumberInputStepDown"],
+}
+#input-panel button[data-testid="stNumberInputStepDown"],
 #input-panel button[data-testid="stNumberInputStepUp"] {
     background: #3d1010 !important;
     border-color: #7f1d1d !important;
