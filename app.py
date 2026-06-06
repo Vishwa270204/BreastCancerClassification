@@ -218,7 +218,7 @@ st.markdown("""
 # Row label
 st.markdown('<div class="section-title">Patient Input Parameters</div>', unsafe_allow_html=True)
 # JS marker to locate and tag the input panel block
-st.markdown('<div style="padding-left:48px; padding-top:10px; ..."></div>, unsafe_allow_html=True)
+st.markdown(<div style="padding-left:48px; padding-top:10px; ..."></div>, unsafe_allow_html=True)
 
 # ── INPUT ROW 1 — not full width, padded ──
 _, r1, _ = st.columns([0.04, 0.92, 0.04])
