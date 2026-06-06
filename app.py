@@ -236,7 +236,9 @@ with r2:
     with d1: estrogen     = st.selectbox("Estrogen Status",     ["Positive", "Negative"])
     with d2: progesterone = st.selectbox("Progesterone Status", ["Positive", "Negative"])
     with d3: a_stage      = st.selectbox("A Stage",             ["Regional", "Distant"])
-    with d4: predict_btn  = st.button("🔍 Run Prediction", use_container_width=True)
+    with d4:
+        st.markdown("<div style='padding-top:22px'></div>", unsafe_allow_html=True)
+        predict_btn = st.button("🔍 Run Prediction", use_container_width=True)
        
 
 # ── HELPERS ──
