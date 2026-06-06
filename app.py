@@ -80,16 +80,15 @@ section[data-testid="stSidebar"] { display: none !important; }
 }
 
 /* selectboxes — dark */
-#input-panel [data-baseweb="select"] > div {
+[data-baseweb="select"] > div {
     background: #ffffff !important;
-    border: 1.5px solid #7f1d1d !important;
+    border: 1.5px solid #d1d5db !important;
     color: #111111 !important;
     border-radius: 6px !important;
     min-height: 30px !important;
     height: 30px !important;
     font-size: 0.8rem !important;
-}
-#input-panel [data-baseweb="select"] svg { fill: #fca5a5 !important; }
+}#input-panel [data-baseweb="select"] svg { fill: #fca5a5 !important; }
 
 /* predict button */
 #input-panel .stButton > button {
