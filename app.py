@@ -71,7 +71,7 @@ section[data-testid="stSidebar"] { display: none !important; }
 #input-panel button[data-testid="stNumberInputStepUp"] {
     background: #3d1010 !important;
     border-color: #7f1d1d !important;
-    color: #fca5a5 !important;
+    color: #white !important;
     height: 30px !important;
     min-height: 30px !important;
     width: 24px !important;
