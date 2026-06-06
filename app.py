@@ -60,7 +60,7 @@ section[data-testid="stSidebar"] { display: none !important; }
 #input-panel input[type="number"] {
     background: #ffffff !important;
     border: 1.5px solid #d1d5db !important;
-    color: #111111 !important;
+    color: white !important;
     border-radius: 6px !important;
     font-size: 0.8rem !important;
     height: 30px !important;
