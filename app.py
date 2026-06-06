@@ -19,7 +19,6 @@ html, body, [class*="css"] { font-family: 'Outfit', sans-serif; }
 section[data-testid="stSidebar"] { display: none !important; }
 [data-testid="collapsedControl"] { display: none !important; }
 
-/* App + block container */
 .stApp { background: #f5eded; }
 .block-container {
     padding-top: 0 !important;
@@ -28,68 +27,88 @@ section[data-testid="stSidebar"] { display: none !important; }
     max-width: 100% !important;
 }
 
-/* ── HEADER ── */
+/* HEADER */
 .header-bar {
     background: linear-gradient(90deg, #6b0f1a 0%, #b91c1c 55%, #dc2626 100%);
     padding: 14px 36px;
     display: flex; align-items: center; gap: 18px;
     box-shadow: 0 4px 24px rgba(107,15,26,0.3);
+    margin-bottom: 0;
 }
 .header-bar h1 { font-family:'Playfair Display',serif; font-size:1.4rem; color:white; margin:0; }
 .header-bar p  { font-size:0.75rem; color:rgba(255,255,255,0.72); margin:0; }
 .hbar-divider  { width:1px; height:36px; background:rgba(255,255,255,0.22); margin:0 10px; }
 
-/* ── INPUT PANEL: use a real stVerticalBlock with border wrapper ──
-   We give the container an id via JS and style it */
+/* INPUT PANEL — targeted via JS id assignment */
 #input-panel {
     background: linear-gradient(135deg, #1a0305 0%, #2d0608 60%, #1a0305 100%) !important;
-    padding: 16px 36px 20px 36px !important;
+    padding: 18px 48px 22px 48px !important;
     border-bottom: 3px solid #7f1d1d !important;
     box-shadow: 0 6px 24px rgba(107,15,26,0.3) !important;
 }
 #input-panel label {
     color: #fca5a5 !important;
-    font-size: 0.7rem !important;
+    font-size: 0.68rem !important;
     font-weight: 600 !important;
     text-transform: uppercase !important;
-    letter-spacing: 0.04em !important;
+    letter-spacing: 0.05em !important;
 }
-#input-panel input {
-    background: #fff !important;
+#input-panel p,
+#input-panel span { color: #f0dada !important; }
+
+/* number inputs — white, compact */
+#input-panel input[type="number"] {
+    background: #ffffff !important;
     border: 1.5px solid #d1d5db !important;
-    color: #111 !important;
+    color: #111111 !important;
     border-radius: 6px !important;
-    font-size: 0.82rem !important;
-    height: 34px !important;
+    font-size: 0.8rem !important;
+    height: 30px !important;
+    padding: 2px 6px !important;
+    max-width: 80px !important;
 }
-#input-panel [data-baseweb="select"] > div {
-    background: #3d0a0a !important;
-    border: 1.5px solid #7f1d1d !important;
-    color: #fef2f2 !important;
-    border-radius: 6px !important;
-    min-height: 34px !important;
-}
-#input-panel [data-baseweb="select"] svg { fill: #fca5a5 !important; }
 #input-panel button[data-testid="stNumberInputStepDown"],
 #input-panel button[data-testid="stNumberInputStepUp"] {
     background: #3d1010 !important;
     border-color: #7f1d1d !important;
     color: #fca5a5 !important;
-    height: 34px !important;
-}
-#input-panel .stButton > button {
-    background: linear-gradient(135deg, #991b1b, #ef4444) !important;
-    color: white !important; border: none !important;
-    border-radius: 8px !important; font-weight: 700 !important;
-    font-size: 0.82rem !important; height: 34px !important;
-    width: 100% !important; letter-spacing: 0.05em !important;
-    text-transform: uppercase !important;
-    box-shadow: 0 4px 18px rgba(239,68,68,0.5) !important;
+    height: 30px !important;
+    min-height: 30px !important;
+    width: 24px !important;
+    min-width: 24px !important;
     padding: 0 !important;
 }
-#input-panel p { color: #f0dada !important; }
 
-/* Section titles */
+/* selectboxes — dark */
+#input-panel [data-baseweb="select"] > div {
+    background: #3d0a0a !important;
+    border: 1.5px solid #7f1d1d !important;
+    color: #fef2f2 !important;
+    border-radius: 6px !important;
+    min-height: 30px !important;
+    height: 30px !important;
+    font-size: 0.8rem !important;
+}
+#input-panel [data-baseweb="select"] svg { fill: #fca5a5 !important; }
+
+/* predict button */
+#input-panel .stButton > button {
+    background: linear-gradient(135deg, #991b1b, #ef4444) !important;
+    color: white !important;
+    border: none !important;
+    border-radius: 8px !important;
+    font-weight: 700 !important;
+    font-size: 0.8rem !important;
+    height: 30px !important;
+    min-height: 30px !important;
+    width: 100% !important;
+    letter-spacing: 0.05em !important;
+    text-transform: uppercase !important;
+    box-shadow: 0 4px 14px rgba(239,68,68,0.45) !important;
+    padding: 0 10px !important;
+}
+
+/* SECTION TITLES */
 .section-title {
     font-family: 'Playfair Display', serif;
     font-size: 1.05rem; color: #6b0f1a;
@@ -97,7 +116,7 @@ section[data-testid="stSidebar"] { display: none !important; }
     padding-bottom: 5px; margin: 0 0 12px 0;
 }
 
-/* Result cards */
+/* RESULT CARDS */
 .result-alive {
     background: linear-gradient(135deg, #14532d, #15803d);
     border-radius: 12px; padding: 22px 26px;
@@ -138,18 +157,13 @@ section[data-testid="stSidebar"] { display: none !important; }
 </style>
 
 <script>
-// Run after Streamlit renders — find the vertical block containing our
-// marker element and assign id="input-panel" to it so CSS above applies.
 function tagInputPanel() {
     var marker = document.getElementById('ip-marker');
     if (!marker) { setTimeout(tagInputPanel, 100); return; }
-
-    // Walk up until we hit a stVerticalBlock that is a direct child of block-container
     var el = marker;
     while (el) {
         el = el.parentElement;
         if (!el) break;
-        // Check if parent is the block-container
         var parent = el.parentElement;
         if (parent && (
             parent.classList.contains('block-container') ||
@@ -161,9 +175,9 @@ function tagInputPanel() {
     }
     setTimeout(tagInputPanel, 100);
 }
-document.addEventListener('DOMContentLoaded', tagInputPanel);
 setTimeout(tagInputPanel, 200);
 setTimeout(tagInputPanel, 600);
+setTimeout(tagInputPanel, 1200);
 </script>
 """, unsafe_allow_html=True)
 
@@ -202,33 +216,29 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-# ── MARKER: invisible element that JS uses to locate and tag this block ──
+# JS marker to locate and tag the input panel block
 st.markdown('<span id="ip-marker" style="display:none"></span>', unsafe_allow_html=True)
 
-# ── INPUT ROW 1 ──
-c1, c2, c3, c4, c5 = st.columns([1.6, 1.2, 1.2, 1.1, 1.1])
-with c1: selected_model     = st.selectbox("🤖 Model",           MODEL_NAMES)
-with c2: survival_months    = st.number_input("Survival Months",  min_value=1, max_value=120, value=40, step=1)
-with c3: tumor_size         = st.number_input("Tumor Size (mm)",  min_value=1, max_value=200, value=25, step=1)
-with c4: reginol_node_pos   = st.number_input("Node Positive",    min_value=0, max_value=50,  value=2,  step=1)
-with c5: regional_node_exam = st.number_input("Node Examined",    min_value=1, max_value=60,  value=10, step=1)
-
-st.markdown("""
-"/>
-""", unsafe_allow_html=True)
+# ── INPUT ROW 1 — not full width, padded ──
+_, r1, _ = st.columns([0.04, 0.92, 0.04])
+with r1:
+    c1, c2, c3, c4, c5 = st.columns([1.6, 1.1, 1.1, 1.0, 1.0])
+    with c1: selected_model     = st.selectbox("🤖 Model",           MODEL_NAMES)
+    with c2: survival_months    = st.number_input("Survival Months",  min_value=1, max_value=120, value=40, step=1)
+    with c3: tumor_size         = st.number_input("Tumor Size (mm)",  min_value=1, max_value=200, value=25, step=1)
+    with c4: reginol_node_pos   = st.number_input("Node Positive",    min_value=0, max_value=50,  value=2,  step=1)
+    with c5: regional_node_exam = st.number_input("Node Examined",    min_value=1, max_value=60,  value=10, step=1)
 
 # ── INPUT ROW 2 ──
-d1, d2, d3, d4 = st.columns([1.4, 1.4, 1.4, 0.9])
-with d1: estrogen     = st.selectbox("Estrogen Status",     ["Positive", "Negative"])
-with d2: progesterone = st.selectbox("Progesterone Status", ["Positive", "Negative"])
-with d3: a_stage      = st.selectbox("A Stage",             ["Regional", "Distant"])
-with d4:
-    st.markdown("<div style='height:22px'></div>", unsafe_allow_html=True)
-    predict_btn = st.button("🔍 Run Prediction", use_container_width=True)
-
-st.markdown("""
-"></div>
-""", unsafe_allow_html=True)
+_, r2, _ = st.columns([0.04, 0.92, 0.04])
+with r2:
+    d1, d2, d3, d4 = st.columns([1.4, 1.4, 1.4, 0.9])
+    with d1: estrogen     = st.selectbox("Estrogen Status",     ["Positive", "Negative"])
+    with d2: progesterone = st.selectbox("Progesterone Status", ["Positive", "Negative"])
+    with d3: a_stage      = st.selectbox("A Stage",             ["Regional", "Distant"])
+    with d4:
+        st.markdown("<div style='height:20px'></div>", unsafe_allow_html=True)
+        predict_btn = st.button("🔍 Run Prediction", use_container_width=True)
 
 # ── HELPERS ──
 def build_input():
@@ -264,7 +274,8 @@ def chart_confidence(alive_p, dead_p, model_name):
                  color="#6b0f1a", fontweight="bold", pad=10)
     ax.tick_params(colors="#777", labelsize=9)
     for sp in ax.spines.values(): sp.set_visible(False)
-    plt.tight_layout(pad=1.0); return fig
+    plt.tight_layout(pad=1.0)
+    return fig
 
 def chart_model_comparison():
     results = []
@@ -275,7 +286,9 @@ def chart_model_comparison():
             results.append({"Model":name,"Alive %":p[0]*100,"Dead %":p[1]*100})
         else:
             pred = m.predict(Xi)[0]
-            results.append({"Model":name,"Alive %":100 if pred==0 else 0,"Dead %":100 if pred==1 else 0})
+            results.append({"Model":name,
+                            "Alive %":100 if pred==0 else 0,
+                            "Dead %": 100 if pred==1 else 0})
     df = pd.DataFrame(results)
     fig, ax = plt.subplots(figsize=CHART_SIZE)
     fig.patch.set_facecolor("white"); ax.set_facecolor("white")
@@ -292,11 +305,13 @@ def chart_model_comparison():
     for sp in ax.spines.values(): sp.set_visible(False)
     idx = MODEL_NAMES.index(selected_model)
     ax.axvspan(idx-0.5, idx+0.5, color="#6b0f1a", alpha=0.08, zorder=0)
-    plt.tight_layout(pad=1.0); return fig
+    plt.tight_layout(pad=1.0)
+    return fig
 
-# ── MAIN CONTENT with left/right padding ──
-_, main_col, _ = st.columns([0.03, 0.94, 0.03])
-with main_col:
+# ── MAIN CONTENT ──
+_, main, _ = st.columns([0.03, 0.94, 0.03])
+with main:
+    st.markdown("<div style='height:20px'></div>", unsafe_allow_html=True)
     col1, col2 = st.columns([1.2, 1], gap="large")
     node_ratio = reginol_node_pos / max(regional_node_exam, 1)
 
