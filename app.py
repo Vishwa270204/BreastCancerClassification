@@ -327,7 +327,6 @@ with main:
                         estrogen, progesterone, a_stage]
         })
         st.dataframe(summary, use_container_width=True, hide_index=True, height=318)
-        st.caption(f"Model features: {', '.join(features)}")
 
     with col2:
         st.markdown('<div class="section-title">🤖 Prediction Result</div>', unsafe_allow_html=True)
@@ -363,11 +362,6 @@ with main:
                     &nbsp;&nbsp;
                     <span style="color:#b91c1c">● Deceased: {dead_p:.1f}%</span>
                 </div>""", unsafe_allow_html=True)
-
-            st.markdown("""<div class="info-box">
-                ⚠️ <strong>Disclaimer:</strong> For educational purposes only.
-                Not a substitute for clinical diagnosis.
-            </div>""", unsafe_allow_html=True)
         else:
             st.info("⬆️ Fill in patient details above and click **Run Prediction**.")
 
