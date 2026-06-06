@@ -49,7 +49,7 @@ section[data-testid="stSidebar"] { display: none !important; }
 #input-panel label {
     color: #1e3a8a !important;
     font-size: 0.68rem !important;
-    font-weight: 600 !important;
+    font-weight: 800 !important;
     text-transform: uppercase !important;
     letter-spacing: 0.05em !important;
 }
