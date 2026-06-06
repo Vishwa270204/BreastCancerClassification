@@ -86,8 +86,8 @@ input[type="number"] {
     border: 1.5px solid #d1d5db !important;
     color: #111111 !important;
     border-radius: 6px !important;
-    min-height: 30px !important;
-    height: 30px !important;
+    min-height: 38px !important;
+    height: 38px !important;
     font-size: 0.8rem !important;
     width: 100% !important;
 }
