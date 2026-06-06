@@ -223,11 +223,11 @@ st.markdown('<span id="ip-marker" style="display:none"></span>', unsafe_allow_ht
 _, r1, _ = st.columns([0.04, 0.92, 0.04])
 with r1:
     c1, c2, c3, c4, c5 = st.columns([1.6, 1.1, 1.1, 1.0, 1.0])
-    with c1: selected_model     = st.selectbox("🤖 Model",           MODEL_NAMES)
-    with c2: survival_months    = st.number_input("Survival Months",  min_value=1, max_value=120, value=40, step=1)
-    with c3: tumor_size         = st.number_input("Tumor Size (mm)",  min_value=1, max_value=200, value=25, step=1)
-    with c4: reginol_node_pos   = st.number_input("Node Positive",    min_value=0, max_value=50,  value=2,  step=1)
-    with c5: regional_node_exam = st.number_input("Node Examined",    min_value=1, max_value=60,  value=10, step=1)
+    with c1: selected_model     = st.selectbox("Model",           MODEL_NAMES)
+    with c2: survival_months    = st.number_input("Survival Months",  step=1)
+    with c3: tumor_size         = st.number_input("Tumor Size (mm)",   step=1)
+    with c4: reginol_node_pos   = st.number_input("Node Positive",      step=1)
+    with c5: regional_node_exam = st.number_input("Node Examined",     step=1)
 
 # ── INPUT ROW 2 ──
 _, r2, _ = st.columns([0.04, 0.92, 0.04])
@@ -259,7 +259,7 @@ def get_input_for_model(name):
     X = build_input()
     return scaler.transform(X) if name in SCALED_MODELS else X.values
 
-CHART_SIZE = (5.0, 3.0)
+CHART_SIZE = (3.8, 2.6)
 
 def chart_confidence(alive_p, dead_p, model_name):
     fig, ax = plt.subplots(figsize=CHART_SIZE)
