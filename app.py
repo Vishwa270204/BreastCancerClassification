@@ -81,7 +81,7 @@ section[data-testid="stSidebar"] { display: none !important; }
 
 /* selectboxes — dark */
 #input-panel [data-baseweb="select"] > div {
-    background: #3d0a0a !important;
+    background: #ffffff !important;
     border: 1.5px solid #7f1d1d !important;
     color: #fef2f2 !important;
     border-radius: 6px !important;
