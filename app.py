@@ -68,16 +68,9 @@ input[type="number"] {
     min-width: 120px !important;
     width: 100% !important;
 }
-#input-panel button[data-testid="stNumberInputStepDown"],
-#input-panel button[data-testid="stNumberInputStepUp"] {
-    background: #ffffff !important;
-    border-color: #d1d5db !important;
-    color: #111111 !important;
-    height: 38px !important;
-    min-height: 38px !important;
-    width: 24px !important;
-    min-width: 24px !important;
-    padding: 0 !important;
+button[data-testid="stNumberInputStepDown"],
+button[data-testid="stNumberInputStepUp"] {
+    display: none !important;
 }
 
 /* selectboxes — dark */
