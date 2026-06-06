@@ -89,6 +89,7 @@ input[type="number"] {
     min-height: 30px !important;
     height: 30px !important;
     font-size: 0.8rem !important;
+    width: 100% !important;
 }
 #input-panel [data-baseweb="select"] svg { fill: #fca5a5 !important; }
 
