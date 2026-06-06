@@ -70,9 +70,9 @@ input[type="number"] {
 }
 #input-panel button[data-testid="stNumberInputStepDown"],
 #input-panel button[data-testid="stNumberInputStepUp"] {
-    background: #3d1010 !important;
-    border-color: #7f1d1d !important;
-    color: #white !important;
+    background: #ffffff !important;
+    border-color: #d1d5db !important;
+    color: #111111 !important;
     height: 38px !important;
     min-height: 38px !important;
     width: 24px !important;
