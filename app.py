@@ -215,7 +215,8 @@ st.markdown("""
     </p>
 </div>
 """, unsafe_allow_html=True)
-
+# Row label
+st.markdown('<div class="section-title">Patient Input Parameters</div>', unsafe_allow_html=True)
 # JS marker to locate and tag the input panel block
 st.markdown('<span id="ip-marker" style="display:none"></span>', unsafe_allow_html=True)
 
