@@ -83,7 +83,7 @@ section[data-testid="stSidebar"] { display: none !important; }
 #input-panel [data-baseweb="select"] > div {
     background: #ffffff !important;
     border: 1.5px solid #7f1d1d !important;
-    color: #fef2f2 !important;
+    color: #111111 !important;
     border-radius: 6px !important;
     min-height: 30px !important;
     height: 30px !important;
