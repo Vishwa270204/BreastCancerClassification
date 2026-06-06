@@ -202,7 +202,7 @@ st.markdown("""
     <span style="font-size:1.9rem">🎗️</span>
     <div>
         <h1>Breast Cancer Survival Predictor</h1>
-        <p>Clinical ML Dashboard &nbsp;·&nbsp; Multi-Model Analysis &nbsp;·&nbsp; For educational use only</p>
+        <p>Clinical ML Dashboard &nbsp;·&nbsp; Multi-Model Analysis</p>
     </div>
     <div class="hbar-divider"></div>
     <p style="color:rgba(255,255,255,0.5);font-size:0.7rem;margin:0;line-height:1.8">
