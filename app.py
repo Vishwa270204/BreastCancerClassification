@@ -57,17 +57,17 @@ section[data-testid="stSidebar"] { display: none !important; }
 #input-panel span { color: #f0dada !important; }
 
 /* number inputs — white, compact */
-#input-panel input[type="number"] {
+input[type="number"] {
     background: #ffffff !important;
     border: 1.5px solid #d1d5db !important;
-    color: white !important;
+    color: #111111 !important;
     border-radius: 6px !important;
     font-size: 0.8rem !important;
     height: 30px !important;
-    padding: 2px 6px !important;
-    max-width: 80px !important;
-}
-#input-panel button[data-testid="stNumberInputStepDown"],
+    padding: 2px 8px !important;
+    min-width: 120px !important;
+    width: 100% !important;
+}#input-panel button[data-testid="stNumberInputStepDown"],
 #input-panel button[data-testid="stNumberInputStepUp"] {
     background: #3d1010 !important;
     border-color: #7f1d1d !important;
