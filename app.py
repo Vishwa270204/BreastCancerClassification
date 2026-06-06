@@ -63,7 +63,7 @@ input[type="number"] {
     color: #111111 !important;
     border-radius: 6px !important;
     font-size: 0.8rem !important;
-    height: 30px !important;
+    height: 38px !important;
     padding: 2px 8px !important;
     min-width: 120px !important;
     width: 100% !important;
@@ -73,8 +73,8 @@ input[type="number"] {
     background: #3d1010 !important;
     border-color: #7f1d1d !important;
     color: #white !important;
-    height: 30px !important;
-    min-height: 30px !important;
+    height: 38px !important;
+    min-height: 38px !important;
     width: 24px !important;
     min-width: 24px !important;
     padding: 0 !important;
